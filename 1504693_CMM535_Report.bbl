@@ -1,0 +1,62 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.9 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global}
+  \entry{6779381}{inproceedings}{}
+    \name{author}{2}{}{%
+      {{hash=DPB}{%
+         family={Dongre},
+         familyi={D\bibinitperiod},
+         given={P.\bibnamedelima B.},
+         giveni={P\bibinitperiod\bibinitdelim B\bibinitperiod},
+      }}%
+      {{hash=MLG}{%
+         family={Malik},
+         familyi={M\bibinitperiod},
+         given={L.\bibnamedelima G.},
+         giveni={L\bibinitperiod\bibinitdelim G\bibinitperiod},
+      }}%
+    }
+    \keyw{data mining;estimation theory;pattern classification;time-varying
+  systems;trees (mathematics);Hoeffding boundary;Web page visits;call
+  records;classification accuracy;classification techniques;classifier
+  performance estimation;concept drift scenarios;data mining techniques;data
+  stream mining;drastic drop;drift detection;ensemble classifier;instance
+  selection method;option trees;possibly unbound streams;real time data stream
+  classification;relational tuples;sensor readings;sliding-window
+  approach;time-varying stream;Accuracy;Algorithm design and
+  analysis;Bagging;Classification algorithms;Conferences;Data mining;Heuristic
+  algorithms;Data stream mining;concept drift;dynamic environment;ensemble
+  classifier}
+    \strng{namehash}{DPBMLG1}
+    \strng{fullhash}{DPBMLG1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{2014 IEEE International Advance Computing Conference
+  (IACC)}
+    \verb{doi}
+    \verb 10.1109/IAdCC.2014.6779381
+    \endverb
+    \field{pages}{533\bibrangedash 537}
+    \field{title}{A review on real time data stream classification and adapting
+  to various concept drift scenarios}
+    \field{year}{2014}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+\enddatalist
+\endinput
