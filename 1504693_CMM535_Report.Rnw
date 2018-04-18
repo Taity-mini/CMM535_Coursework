@@ -1,4 +1,4 @@
-\documentclass[10pt]{article}
+\documentclass[10pt  ,usenames, dvipsnames]{article}
 \usepackage{graphicx, verbatim}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -10,6 +10,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{listings}
+\usepackage{color}
 \setlength{\textwidth}{6.5in} 
 \setlength{\textheight}{9in}
 \setlength{\oddsidemargin}{0in} 
@@ -22,6 +24,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
 \usepackage{tabularx}
+\usepackage{lmodern} % for bold teletype font
+\usepackage{minted}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -37,7 +41,6 @@
 \usepackage[affil-it]{authblk} 
 \usepackage{etoolbox}
 \usepackage{lmodern}
-
 
 % Notice the following package, it will help you cite papers
 \usepackage[backend=bibtex ,sorting=none]{biblatex}
@@ -61,88 +64,197 @@
 \ \\
 %\thispagestyle{empty}
 
-\section{Research}
 
-[your text goes here]
-The paper that was chosen for this work is \cite{6779381}. The authors provided a full review on different streaming algorithms and methos that handle concept drfit?. Below is a review of this paper that includes problem statement, related work and methods applied.\\
 
-\textcolor{blue}{\textit{Notice how I cited the paper, and how does it appear in the document, to do so, you need to have a file in your working director (references.bib), this file simply contains the bibtext items for the papers you chose. These BibTex items are often avaiable to download from publishers website, see Figure~\ref{fig1}}}
-\subsection{Problem Statement}
-What is this paper about? your text goes here, your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here
-
-\subsection{Relevant Work}
-[your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here]
-\subsection{Methods}
-[your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here]
-\subsection{Results}
-[your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here]
-\subsection{Conclusion}
-
-[your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here your text goes here]
+\section {Data Exploration}
 
 
 
+\subsection{Dataset Choice}
+The dataset that has been chosen for this part of the coursework is Mushroom. This is available on the UCI repository. The set was chosen because of it's adequate instance size and number of attributes.
 
-\section {Data Streams}
+.
 
-The dataset that has been chosen for this part of the course work is IRIS. This is available on the UCI repository. The set was chosen because of .... It proves to be a good set for evaluating 'x' methods .... 
 
-\subsection{Data Exploration}
+\subsection{Problem Statement and Data Exploration}
 
-Explore the dataset as required by the course work. Discuss, visualise, summarise ... Make sure utilise what you have learnt in the class .... Presenting results is important. Here are some expampoles.... \\
 
-It is a good practice to separate the code from the results, this makes the document more readable and easier to reproduce. Here is an example, where I want to show the class distribution in my dataset.
+The main purpose of the Mushroom dataset is to identify which characteristics (attributes) determine if a particular mushroom species is editable or poisonous.
 
-% notice that eval=FALSE will show the code but not execute it, also notice that the comment=NA will cause the # to disappear from the output. 
+Therefore the aim of this assignment is to build a predictive model to predict if a certain type of Mushroom is ediable or not.
 
-<<eval=FALSE,comment=NA>>=
-table(iris$Species)
+
+To start off the data explortation I will first import the required librarys.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>=
+#Import packages
+library(randomForest)  
+library(e1071)  
+library(caret)  
+library(ggplot2) 
+library(gridExtra)
+library(caret)
+library(rpart.plot)
+library(RColorBrewer)
+library(plyr)
 @
 
-<<echo=FALSE,comment=NA>>=
-table(iris$Species)
+<<warning=FALSE, eval=TRUE,comment=NA>>=
+#Import packages
+library(randomForest)  
+library(e1071)  
+library(caret)  
+library(ggplot2) 
+library(gridExtra)
+library(caret)
+library(rpart.plot)
+library(RColorBrewer)
+library(plyr)
 @
 
-\textbf{Tables}: If you want to show results in a table format, the package \textcolor{blue}{xtable} is very useful. Here is a an example: suppose you want to show the head of iris data, a simple way is to do the following: 
 
-<<eval=FALSE,comment=NA>>=
-head(iris)
+Then set the working directory to the Coursework project folder path:
+<<eval=FALSE,comment=TRUE>>=
+setwd("~/CMM535 Data Science Development/Coursework/CMM535_Coursework")
 @
 
-<<echo=FALSE,comment=NA>>=
-head(iris)
+In order to import the dataset, I used a third party helper function, which can be viewed at Appdenix 1.
+The helper function not only set the attributes names but the instances names as well. Since all the data is represented a single character, it converts them into their string equivalent.
+
+
+<<eval=FALSE,comment=TRUE>>=
+#helper function
+source('helper_functions.r')
+
+#Import datasets using helper function
+
+mushroom <- fetchAndCleanData()
 @
 
-This is fine, but sometimes you want to produce  the results in a table-format at a better standard. See the code below. Often, I won't show the code below, nor make it executable (i.e. set eval=FALSE). Instead, run the commands below in the console, then copy the resulting latex code from consle and paste it below, and add caption and label as shown below
 
-<<eval=FALSE>>=
-# load package 
-library(xtable)
-# run the following command in the console
-print(xtable(head(iris))
-# copy the resulting latex code from consle and paste it below
-# Add caption and label as shown below
+<<eval=TRUE,comment=NA>>=
+#helper function
+source('helper_functions.r')
+
+#Import datasets using helper function
+
+mushroom <- fetchAndCleanData()
 @
 
-% latex table generated in R 3.3.0 by xtable 1.8-2 package
-% Fri Mar  2 11:56:14 2018
+
+Now that the dataset is imported, it is time to do some data exploration and analysis.
+
+Number of rows in the dataset
+
+<<eval=FALSE,comment=TRUE>>=
+#Number of rows in the dataset
+nrow(mushroom)
+
+@
+
+
+<<warning=FALSE,echo=FALSE>>==
+
+#Number of columns in the dataset
+nrow(mushroom)
+
+@
+
+Number of columns (features) in the dataset
+
+<<eval=FALSE,comment=TRUE>>==
+ncol(mushroom)
+
+@
+
+
+<<warning=FALSE,echo=FALSE>>==
+ncol(mushroom)
+
+@
+
+Summary of the Mushroom dataset
+
+<<eval=FALSE,comment=TRUE>>==
+#Summar of the Mushroom dataset
+str(mushroom)
+
+@
+
+
+<<warning=FALSE,echo=FALSE>>==
+str(mushroom)
+
+@
+
+Now that some basic data exploration is covered, next to inspect the dataset a bit further. Starting with the class (edidable) distribution in the mushroom dataset,
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Class Distribution
+barplot(table(mushroom$Edible))
+@
+
+<<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
+barplot(table(mushroom$Edible))
+@
+
+
+Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it isEdible or Poisonous. Which is shown in the plot below.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+
+#Comparisons of CapShape and CapSurface with Edible or Poisonous
+ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) + 
+                       geom_jitter(alpha=0.3) +
+                       scale_color_manual(breaks = c('Edible','Poisonous'), 
+                                          values=c('darkgreen','red'))
+                                                                                  
+
+@
+
+\begin{figure}[H]
+\begin{center}
+<<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
+
+ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) + 
+                       geom_jitter(alpha=0.3) +
+                       scale_color_manual(breaks = c('Edible','Poisonous'), 
+                                          values=c('darkgreen','red'))
+                                                                                
+@
+\caption {Petal Length /Width per species in IRIS set}
+\label{fig2}
+\end {center}
+\end {figure}
+
+
+
+\clearpage
+
+
+% latex table generated in R 3.4.2 by xtable 1.8-2 package
+% Tue Apr 17 23:21:55 2018
 \begin{table}[ht]
 \centering
-\caption{Iris Data}
-\begin{tabular}{rrrrrl}
+\caption{Mushroom Data}
+\scalebox{0.75}{
+\begin{tabular}{p{1in}|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
   \hline
- & Sepal.Length & Sepal.Width & Petal.Length & Petal.Width & Species \\ 
+ & Edible & CapShape & CapSurface & CapColor & Bruises & Odor & GillAttachment & GillSpacing & GillSize & GillColor & StalkShape & StalkRoot & StalkSurfaceAboveRing & StalkSurfaceBelowRing & StalkColorAboveRing & StalkColorBelowRing & VeilType & VeilColor & RingNumber & RingType & SporePrintColor & Population & Habitat \\ 
   \hline
-1 & 5.10 & 3.50 & 1.40 & 0.20 & setosa \\ 
-  2 & 4.90 & 3.00 & 1.40 & 0.20 & setosa \\ 
-  3 & 4.70 & 3.20 & 1.30 & 0.20 & setosa \\ 
-  4 & 4.60 & 3.10 & 1.50 & 0.20 & setosa \\ 
-  5 & 5.00 & 3.60 & 1.40 & 0.20 & setosa \\ 
-  6 & 5.40 & 3.90 & 1.70 & 0.40 & setosa \\ 
+1 & Poisonous & Convex & Smooth & Brown & True & Pungent & Free & Close & Narrow & Black & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
+  2 & Edible & Convex & Smooth & Yellow & True & Almond & Free & Close & Broad & Black & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Grasses \\ 
+  3 & Edible & Bell & Smooth & White & True & Anise & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Meadows \\ 
+  4 & Poisonous & Convex & Scaly & White & True & Pungent & Free & Close & Narrow & Brown & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
+  5 & Edible & Convex & Smooth & Gray & False & None & Free & Crowded & Broad & Black & Tapering & Equal & Smooth & Smooth & White & White & Partial & White & One & Evanescent & Brown & Abundnant & Grasses \\ 
+  6 & Edible & Convex & Scaly & Yellow & True & Almond & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Numerous & Grasses \\ 
    \hline
 \end{tabular}
-\label{tab1}
+}
+\caption{test} 
+\label{tab:example}
 \end{table}
+
 
 The good thing about the above approach is you can always refer to the table in your document. For example 'As can be seen in Table~\ref{tab1},...'
 
@@ -190,6 +302,12 @@ p
 
 
 
+\section {Modeling and Classifcation}
+
+
+
+\subsection {Divide into training and}
+
 
 \subsection{Build Classifier}
 
@@ -199,41 +317,321 @@ Complete this part as required by the coursework sheet. Again, be clear, visuals
 
 
 
-\subsection{Build Stream Classifier}
-
-Same as above. Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
 
 
 
 
-\section {Text Classification}
-
-Same as above. Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
-
-
-\subsection{Preprocessing}
-
-Record, explain and justify your appraoch. Record, explain and justify your appraoch. 
-Record, explain and justify your appraoch. Record, explain and justify your appraoch.Record, explain and justify your appraoch.Record, explain and justify your appraoch.Record, explain and justify your appraoch.Record, explain and justify your appraoch. 
-Record, explain and justify your appraoch. 
-
-
-\subsection{Text Analysis}
-
-Record, explain and justify your appraoch.Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
 
 
 
-\subsection{Text Classification}
-
-Use one of the ‘R’ packages to build a classifier that classifies the tweets as leave tweet or remain tweets. 
-
-Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
 
 
-\section{Reproducing Results}
 
-You don't need to have a section called \textbf{Reproducing Results}, your report itself will be the answer for this section. 
+% Clear the page and starte a new page for references 
+
+\clearpage
+% The title for the reference section is called References 
+
+\section{Appendix}\label{pubs}
+
+\subsection{Mushroom Dataset Helper Function}
+
+I used a helper function to import the dataset, it helps with assigning the correct column and row names to the dataset. It also removes any missing values from the dateset.
+
+
+\lstset{ 
+  language=R,                     % the language of the code
+  basicstyle=\tiny\ttfamily, % the size of the fonts that are used for the code
+  stepnumber=1,                   % the step between two line-numbers. If it is 1, each line
+                                  % will be numbered
+  numbersep=5pt,                  % how far the line-numbers are from the code
+  backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+  showspaces=false,               % show spaces adding particular underscores
+  showstringspaces=false,         % underline spaces within strings
+  showtabs=false,                 % show tabs within strings adding particular underscores
+  frame=single,                   % adds a frame around the code
+  rulecolor=\color{black},        % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. commens (green here))
+  tabsize=2,                      % sets default tabsize to 2 spaces
+  captionpos=b,                   % sets the caption-position to bottom
+  breaklines=true,                % sets automatic line breaking
+  breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+ keywordstyle=\color{RoyalBlue},      % keyword style
+  commentstyle=\color{YellowGreen},   % comment style
+  stringstyle=\color{ForestGreen}      % string literal style
+} 
+
+
+
+% \lstset{ %
+% basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+% numbers=left,           % where to put the line-numbers
+% numberstyle=\footnotesize,  % the size of the fonts that are used for the line-numbers
+% stepnumber=1,           % the step between two line-numbers. If it is 1 each line will be numbered
+% numbersep=5pt,          % how far the line-numbers are from the code
+% backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+% showspaces=false,           % show spaces adding particular underscores
+% showstringspaces=false,     % underline spaces within strings
+% showtabs=false,         % show tabs within strings adding particular underscores
+% frame=single,           % adds a frame around the code
+% tabsize=2,              % sets default tabsize to 2 spaces
+% captionpos=b,           % sets the caption-position to bottom
+% breaklines=true,            % sets automatic line breaking
+% breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
+% escapeinside={\%*}{*)},      % if you want to add a comment within your code
+% breaklines=true,
+%   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
+% }
+
+    \begin{lstlisting}
+fetchAndCleanData = function(){
+  
+  # All of this code is from
+  # https://rstudio-pubs-static.s3.amazonaws.com/125760_358e4a6802c94fa29e2a9ab49f45df94.html
+  
+  mushrooms = read.table("data/agaricus-lepiota.data", header = FALSE, sep = ",")
+  
+  
+  
+  #create a data frame with only the required columns
+  shrooms = mushrooms
+  
+  #column names are added
+  colnames(shrooms) = c("Edible",
+                        "CapShape",
+                        "CapSurface",
+                        "CapColor",
+                        "Bruises",                        
+                        "Odor",
+                        "GillAttachment",
+                        "GillSpacing",
+                        "GillSize",
+                        "GillColor",
+                        "StalkShape",
+                        "StalkRoot",
+                        "StalkSurfaceAboveRing",
+                        "StalkSurfaceBelowRing",
+                        "StalkColorAboveRing",
+                        "StalkColorBelowRing",
+                        "VeilType",
+                        "VeilColor",
+                        "RingNumber",
+                        "RingType",
+                        "SporePrintColor",
+                        "Population",
+                        "Habitat")
+  
+  
+  #Edible
+  shrooms$Edible = as.character(shrooms$Edible)
+  shrooms$Edible[shrooms$Edible == "e"] = "Edible"
+  shrooms$Edible[shrooms$Edible == 'p'] = "Poisonous"
+  shrooms$Edible = factor(shrooms$Edible)
+  
+  
+  # Edible
+  #levels(shrooms$Edible) = c(levels(shrooms$Edible), c("Poisonous","Edible"))
+  #shrooms$Edible[shrooms$Edible == "p"] = "Poisonous"
+  #shrooms$Edible[shrooms$Edible == "e"] = "Edible"
+  
+  #CapShape
+  levels(shrooms$`CapShape`) = c(levels(shrooms$`CapShape`), c("Bell","Conical","Convex","Flat","Knobbed","Sunken"))
+  shrooms$`CapShape`[shrooms$`CapShape` == "b"] = "Bell"
+  shrooms$`CapShape`[shrooms$`CapShape` == "c"] = "Conical"
+  shrooms$`CapShape`[shrooms$`CapShape` == "x"] = "Convex"
+  shrooms$`CapShape`[shrooms$`CapShape` == "f"] = "Flat"
+  shrooms$`CapShape`[shrooms$`CapShape` == "k"] = "Knobbed"
+  shrooms$`CapShape`[shrooms$`CapShape` == "s"] = "Sunken"
+  
+  #CapSurface
+  levels(shrooms$`CapSurface`) = c(levels(shrooms$`CapSurface`), c("Fibrous", "Grooves", "Scaly", "Smooth"))
+  shrooms$`CapSurface`[shrooms$`CapSurface` == "f"] = "Fibrous"
+  shrooms$`CapSurface`[shrooms$`CapSurface` == "g"] = "Grooves"
+  shrooms$`CapSurface`[shrooms$`CapSurface` == "y"] = "Scaly"
+  shrooms$`CapSurface`[shrooms$`CapSurface` == "s"] = "Smooth"
+  
+  #CapColor
+  levels(shrooms$`CapColor`) = c(levels(shrooms$`CapColor`), c("Brown", "Buff", "Cinnamon", "Gray", "Green", "Pink", "Purple", "Red", "White", "Yellow"))
+  shrooms$`CapColor`[shrooms$`CapColor` == "n"] = "Brown"
+  shrooms$`CapColor`[shrooms$`CapColor` == "b"] = "Buff"
+  shrooms$`CapColor`[shrooms$`CapColor` == "c"] = "Cinnamon"
+  shrooms$`CapColor`[shrooms$`CapColor` == "g"] = "Gray"
+  shrooms$`CapColor`[shrooms$`CapColor` == "r"] = "Green"
+  shrooms$`CapColor`[shrooms$`CapColor` == "p"] = "Pink"
+  shrooms$`CapColor`[shrooms$`CapColor` == "u"] = "Purple"
+  shrooms$`CapColor`[shrooms$`CapColor` == "e"] = "Red"
+  shrooms$`CapColor`[shrooms$`CapColor` == "w"] = "White"
+  shrooms$`CapColor`[shrooms$`CapColor` == "y"] = "Yellow"
+  
+  # Bruises
+  levels(shrooms$Bruises) = c(levels(shrooms$Bruises), c("True","False"))
+  shrooms$Bruises[shrooms$Bruises == "t"] = "True"
+  shrooms$Bruises[shrooms$Bruises == "f"] = "False"
+  
+  #Odor
+  levels(shrooms$Odor) = c(levels(shrooms$Odor), c("Almond", "Anise", "Creosote", "Fishy", "Foul", "Musty", "None", "Pungent", "Spicy"))
+  shrooms$Odor[shrooms$Odor == "a"] = "Almond"
+  shrooms$Odor[shrooms$Odor == "l"] = "Anise"
+  shrooms$Odor[shrooms$Odor == "c"] = "Creosote"
+  shrooms$Odor[shrooms$Odor == "y"] = "Fishy"
+  shrooms$Odor[shrooms$Odor == "f"] = "Foul"
+  shrooms$Odor[shrooms$Odor == "m"] = "Musty"
+  shrooms$Odor[shrooms$Odor == "n"] = "None"
+  shrooms$Odor[shrooms$Odor == "p"] = "Pungent"
+  shrooms$Odor[shrooms$Odor == "s"] = "Spicy"
+  
+  # GillAttachment
+  levels(shrooms$GillAttachment) = c(levels(shrooms$GillAttachment), c("Attached","Descending","Free","Notched"))
+  shrooms$GillAttachment[shrooms$GillAttachment == "a"] = "Attached"
+  shrooms$GillAttachment[shrooms$GillAttachment == "d"] = "Descending"
+  shrooms$GillAttachment[shrooms$GillAttachment == "f"] = "Free"
+  shrooms$GillAttachment[shrooms$GillAttachment == "n"] = "Notched"
+  
+  # GillSpacing
+  levels(shrooms$GillSpacing) = c(levels(shrooms$GillSpacing), c("Close","Crowded","Distant"))
+  shrooms$GillSpacing[shrooms$GillSpacing == "c"] = "Close"
+  shrooms$GillSpacing[shrooms$GillSpacing == "w"] = "Crowded"
+  shrooms$GillSpacing[shrooms$GillSpacing == "d"] = "Distant"
+  
+  # GillSize
+  levels(shrooms$GillSize) = c(levels(shrooms$GillSize), c("Broad","Narrow"))
+  shrooms$GillSize[shrooms$GillSize == "b"] = "Broad"
+  shrooms$GillSize[shrooms$GillSize == "n"] = "Narrow"
+  
+  # GillColor
+  levels(shrooms$GillColor) = c(levels(shrooms$GillColor), c("Black","Brown","Buff","Chocolate","Gray","Green","Orange","Pink","Purple","Red","White","Yellow"))
+  shrooms$GillColor[shrooms$GillColor == "k"] = "Black"
+  shrooms$GillColor[shrooms$GillColor == "n"] = "Brown"
+  shrooms$GillColor[shrooms$GillColor == "b"] = "Buff"
+  shrooms$GillColor[shrooms$GillColor == "h"] = "Chocolate"
+  shrooms$GillColor[shrooms$GillColor == "g"] = "Gray"
+  shrooms$GillColor[shrooms$GillColor == "r"] = "Green"
+  shrooms$GillColor[shrooms$GillColor == "o"] = "Orange"
+  shrooms$GillColor[shrooms$GillColor == "p"] = "Pink"
+  shrooms$GillColor[shrooms$GillColor == "u"] = "Purple"
+  shrooms$GillColor[shrooms$GillColor == "e"] = "Red"
+  shrooms$GillColor[shrooms$GillColor == "w"] = "White"
+  shrooms$GillColor[shrooms$GillColor == "y"] = "Yellow"
+  
+  # StalkShape
+  levels(shrooms$StalkShape) = c(levels(shrooms$StalkShape), c("Enlarging","Tapering"))
+  shrooms$StalkShape[shrooms$StalkShape == "e"] = "Enlarging"
+  shrooms$StalkShape[shrooms$StalkShape == "t"] = "Tapering"
+  
+  # StalkRoot
+  levels(shrooms$StalkRoot) = c(levels(shrooms$StalkRoot), c("Bulbous","Club","Cup","Equal","Rhizomorphs","Rooted","Missing"))
+  shrooms$StalkRoot[shrooms$StalkRoot == "b"] = "Bulbous"
+  shrooms$StalkRoot[shrooms$StalkRoot == "c"] = "Club"
+  shrooms$StalkRoot[shrooms$StalkRoot == "u"] = "Cup"
+  shrooms$StalkRoot[shrooms$StalkRoot == "e"] = "Equal"
+  shrooms$StalkRoot[shrooms$StalkRoot == "z"] = "Rhizomorphs"
+  shrooms$StalkRoot[shrooms$StalkRoot == "r"] = "Rooted"
+  shrooms$StalkRoot[shrooms$StalkRoot == "?"] = "Missing"
+  
+  # StalkSurfaceAboveRing
+  levels(shrooms$StalkSurfaceAboveRing) = c(levels(shrooms$StalkSurfaceAboveRing), c("Fibrous","Scaly","Silky","Smooth"))
+  shrooms$StalkSurfaceAboveRing[shrooms$StalkSurfaceAboveRing == "f"] = "Fibrous"
+  shrooms$StalkSurfaceAboveRing[shrooms$StalkSurfaceAboveRing == "y"] = "Scaly"
+  shrooms$StalkSurfaceAboveRing[shrooms$StalkSurfaceAboveRing == "k"] = "Silky"
+  shrooms$StalkSurfaceAboveRing[shrooms$StalkSurfaceAboveRing == "s"] = "Smooth"
+  
+  # StalkSurfaceBelowRing
+  levels(shrooms$StalkSurfaceBelowRing) = c(levels(shrooms$StalkSurfaceBelowRing), c("Fibrous","Scaly","Silky","Smooth"))
+  shrooms$StalkSurfaceBelowRing[shrooms$StalkSurfaceBelowRing == "f"] = "Fibrous"
+  shrooms$StalkSurfaceBelowRing[shrooms$StalkSurfaceBelowRing == "y"] = "Scaly"
+  shrooms$StalkSurfaceBelowRing[shrooms$StalkSurfaceBelowRing == "k"] = "Silky"
+  shrooms$StalkSurfaceBelowRing[shrooms$StalkSurfaceBelowRing == "s"] = "Smooth"
+  
+  # StalkColorAboveRing
+  levels(shrooms$StalkColorAboveRing) = c(levels(shrooms$StalkColorAboveRing), c("Brown","Buff","Cinnamon","Gray","Orange","Pink","Red","White","Yellow"))
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "n"] = "Brown"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "b"] = "Buff"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "c"] = "Cinnamon"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "g"] = "Gray"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "o"] = "Orange"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "p"] = "Pink"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "e"] = "Red"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "w"] = "White"
+  shrooms$StalkColorAboveRing[shrooms$StalkColorAboveRing == "y"] = "Yellow"
+  
+  
+  # StalkColorBelowRing
+  levels(shrooms$StalkColorBelowRing) = c(levels(shrooms$StalkColorBelowRing), c("Brown","Buff","Cinnamon","Gray","Orange","Pink","Red","White","Yellow"))
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "n"] = "Brown"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "b"] = "Buff"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "c"] = "Cinnamon"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "g"] = "Gray"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "o"] = "Orange"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "p"] = "Pink"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "e"] = "Red"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "w"] = "White"
+  shrooms$StalkColorBelowRing[shrooms$StalkColorBelowRing == "y"] = "Yellow"
+  
+  # VeilType
+  levels(shrooms$VeilType) = c(levels(shrooms$VeilType), c("Partial","Universal"))
+  shrooms$VeilType[shrooms$VeilType == "p"] = "Partial"
+  shrooms$VeilType[shrooms$VeilType == "u"] = "Universal"
+  
+  # VeilColor
+  levels(shrooms$VeilColor) = c(levels(shrooms$VeilColor), c("Brown","Orange","White","Yellow"))
+  shrooms$VeilColor[shrooms$VeilColor == "n"] = "Brown"
+  shrooms$VeilColor[shrooms$VeilColor == "o"] = "Orange"
+  shrooms$VeilColor[shrooms$VeilColor == "w"] = "White"
+  shrooms$VeilColor[shrooms$VeilColor == "y"] = "Yellow"
+  
+  # RingNumber
+  levels(shrooms$RingNumber) = c(levels(shrooms$RingNumber), c("None","One","Two"))
+  shrooms$RingNumber[shrooms$RingNumber == "n"] = "None"
+  shrooms$RingNumber[shrooms$RingNumber == "o"] = "One"
+  shrooms$RingNumber[shrooms$RingNumber == "t"] = "Two"
+  
+  # RingType
+  levels(shrooms$RingType) = c(levels(shrooms$RingType), c("Cobwebby","Evanescent","Flaring","Large","None","Pendant","Sheathing","Zone"))
+  shrooms$RingType[shrooms$RingType == "c"] = "Cobwebby"
+  shrooms$RingType[shrooms$RingType == "e"] = "Evanescent"
+  shrooms$RingType[shrooms$RingType == "f"] = "Flaring"
+  shrooms$RingType[shrooms$RingType == "l"] = "Large"
+  shrooms$RingType[shrooms$RingType == "n"] = "None"
+  shrooms$RingType[shrooms$RingType == "p"] = "Pendant"
+  shrooms$RingType[shrooms$RingType == "s"] = "Sheathing"
+  shrooms$RingType[shrooms$RingType == "z"] = "Zone"
+  
+  # SporePrintColor
+  levels(shrooms$SporePrintColor) = c(levels(shrooms$SporePrintColor), c("Black","Brown","Buff","Chocolate","Green","Orange","Purple","White","Yellow"))
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "k"] = "Black"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "n"] = "Brown"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "b"] = "Buff"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "h"] = "Chocolate"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "r"] = "Green"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "o"] = "Orange"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "u"] = "Purple"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "w"] = "White"
+  shrooms$SporePrintColor[shrooms$SporePrintColor == "y"] = "Yellow"
+  
+  # Population
+  levels(shrooms$Population) = c(levels(shrooms$Population), c("Abundnant","Clustered","Numerous","Scattered","Several","Solitary"))
+  shrooms$Population[shrooms$Population == "a"] = "Abundnant"
+  shrooms$Population[shrooms$Population == "c"] = "Clustered"
+  shrooms$Population[shrooms$Population == "n"] = "Numerous"
+  shrooms$Population[shrooms$Population == "s"] = "Scattered"
+  shrooms$Population[shrooms$Population == "v"] = "Several"
+  shrooms$Population[shrooms$Population == "y"] = "Solitary"
+  
+  # Habitat
+  levels(shrooms$Habitat) = c(levels(shrooms$Habitat), c("Grasses","Leaves","Meadows","Paths","Urban","Waste","Woods"))
+  shrooms$Habitat[shrooms$Habitat == "g"] = "Grasses"
+  shrooms$Habitat[shrooms$Habitat == "l"] = "Leaves"
+  shrooms$Habitat[shrooms$Habitat == "m"] = "Meadows"
+  shrooms$Habitat[shrooms$Habitat == "p"] = "Paths"
+  shrooms$Habitat[shrooms$Habitat == "u"] = "Urban"
+  shrooms$Habitat[shrooms$Habitat == "w"] = "Waste"
+  shrooms$Habitat[shrooms$Habitat == "d"] = "Woods"
+  
+  return(shrooms)
+}
+
+\end{lstlisting}
+
+
 
 
 % Clear the page and starte a new page for references 
