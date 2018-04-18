@@ -8,6 +8,7 @@ library(caret)
 library(rpart.plot)
 library(RColorBrewer)
 library(plyr)
+library(dplyr)
 #helper function
 source('helper_functions.r')
 
@@ -42,18 +43,10 @@ ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) +
                                                                                   
 
 
-
-# ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=CapSurface, color=Edible)) + 
-#   geom_jitter(alpha=0.3) +
-#   scale_color_manual(breaks = c('Edible','Poisonous'), values=c('darkgreen','red'))
-
-
-#Comparisons of CapShape and CapSurface with Edible or Poisionous
-ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) + 
+#Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous
+ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=StalkSurfaceBelowRing, color=Edible)) + 
   geom_jitter(alpha=0.3) +
   scale_color_manual(breaks = c('Edible','Poisonous'), values=c('darkgreen','red'))
-
-
 
 
 
@@ -157,6 +150,114 @@ system.time(for(j in 1:times ) x <- check(j))  #  4.82 seconds
 
 # stop workers
 stopWorkers(workers)
+
+
+# Clustering dataset
+
+
+library(data.table)
+fwrite(,,"some.name.temp")
+dfm <- fread("some.name.temp",colClasses="numeric")
+
+mushroom$StalkRoot <- NULL
+ mushroom <- as.numeric(mushroom$Edible)
+
+ str(mushroom) 
+
+
+
+#Copy dataset
+noClass <-mushroom
+#Remove class as it is not being transformed to binary
+noClass$Edible <- NULL
+
+binaryVars <- caret::dummyVars(~ ., data = noClass)
+newMushroom <- predict(binaryVars, newdata = noClass)
+
+#add class to binarised dataset
+binMushroom <-cbind(newMushroom, mushroom[1])
+str(binMushroom)
+
+summary(binMushroom)
+
+
+df <- mushroom
+
+dfN <- as.data.frame(lapply(newMushroom[,], normalizeData) )
+# add the label
+dfN$Species <- df$Species
+clusteredDF <- clustData(dfN,ncol(df), c(2,2,2))
+
+clusteredDF <- clustData(mushroom ,ncol(mushroom)-1, c(2,2,2))
+
+str(df)
+
+
+
+normalizeData <- function (x ) {
+return ( (x-min(x) ) / ( max(x)- min(x) ))
+}
+
+str(mushroom)
+
+
+dfNew <- mushroom
+dfNew$VeilType <- NULL
+
+dfNew[,2:23] = lapply(dfNew[,2:23], as.numeric)
+
+
+dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
+dfN$VeilType <- NULL
+
+str(dfN)
+dfN$Edible <- dfNew$Edible
+
+table(complete.cases (dfN))
+
+
+clusteredDF <- clustData(dfN,ncol(dfNew), c(2,2))
+
+head(clusteredDF,20)
+table(clusteredDF$cluster)
+
+dfU <- clustData(dfN,ncol(binAdult),rep(2,length(unique(dfN[,ncol(binAdult)]))))
+
+dfU <- transform(mushroom, class=as.numeric(as.character(mushroom)))
+
+clustData <- function (df,ClassIndex, kmeansClasses = rep(0,unique(df[,ClassIndex]))){
+  
+  
+  dfs <- split(df,df[,ClassIndex])
+  
+  clustList <- list()
+  
+  n <- length(dfs)
+  
+  for(i in 1:length(kmeansClasses)){
+    if(kmeansClasses[i] >1 & kmeansClasses[i] < nrow(dfs[i])){
+      
+      clustList[[i]] <- kmean(dfs[[i]][,-ClassIndex], kmeansClasses[i])
+      
+      dfs[[i]]$cluster <- paste0((dfs[i][,ClassIndex]),
+                                 "_", "c", clustList[[i]]$cluster)
+  
+    }
+    else{
+      dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]), 
+                                "_c0")
+    }
+  }
+  
+  
+  allClusteredElements <- ldply (dfs, data.frame)
+  allClusteredElements <- allClusteredElements[,-1]
+  
+  allClusteredElements <- allClusteredElements[,ClassIndex]
+  
+  return (allClusteredElements)
+  
+}
 
 
 #Clustering Function
