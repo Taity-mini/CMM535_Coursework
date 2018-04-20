@@ -46,9 +46,7 @@
 \usepackage[backend=bibtex ,sorting=none]{biblatex}
 \bibliography{references}
 
-\begin{filecontents*}{references.bib}
 
-\end{filecontents*}
 
 
 \begin{document}
@@ -86,7 +84,7 @@ Therefore the aim of this assignment is to build a predictive model to predict i
 
 To start off the data explortation I will first import the required librarys.
 
-<<warning=FALSE,eval=FALSE,comment=TRUE>>=
+<<warning=FALSE,eval=FALSE,comment=FALSE>>=
 #Import packages
 library(randomForest)  
 library(e1071)  
@@ -99,7 +97,7 @@ library(RColorBrewer)
 library(plyr)
 @
 
-<<warning=FALSE, eval=TRUE,comment=NA>>=
+<<warning=FALSE,echo=FALSE, comment=FALSE, message=FALSE>>==
 #Import packages
 library(randomForest)  
 library(e1071)  
@@ -118,7 +116,11 @@ Then set the working directory to the Coursework project folder path:
 setwd("~/CMM535 Data Science Development/Coursework/CMM535_Coursework")
 @
 
-In order to import the dataset, I used a third party helper function, which can be viewed at Appdenix 1.
+<<warning=FALSE,echo=FALSE, comment=FALSE, message=FALSE>>==
+setwd("~/CMM535 Data Science Development/Coursework/CMM535_Coursework")
+@
+
+In order to import the dataset, I used a third party helper function, which can be viewed at Figure .
 The helper function not only set the attributes names but the instances names as well. Since all the data is represented a single character, it converts them into their string equivalent.
 
 
@@ -132,7 +134,7 @@ mushroom <- fetchAndCleanData()
 @
 
 
-<<eval=TRUE,comment=NA>>=
+<<warning=FALSE,echo=FALSE>>==
 #helper function
 source('helper_functions.r')
 
@@ -144,7 +146,7 @@ mushroom <- fetchAndCleanData()
 
 Now that the dataset is imported, it is time to do some data exploration and analysis.
 
-Number of rows in the dataset
+Number of rows in the dataset:
 
 <<eval=FALSE,comment=TRUE>>=
 #Number of rows in the dataset
@@ -160,7 +162,7 @@ nrow(mushroom)
 
 @
 
-Number of columns (features) in the dataset
+Number of columns (features) in the dataset:
 
 <<eval=FALSE,comment=TRUE>>==
 ncol(mushroom)
@@ -173,10 +175,10 @@ ncol(mushroom)
 
 @
 
-Summary of the Mushroom dataset
+Summary of the Mushroom dataset:
 
 <<eval=FALSE,comment=TRUE>>==
-#Summar of the Mushroom dataset
+#Summary of the Mushroom dataset
 str(mushroom)
 
 @
@@ -187,19 +189,23 @@ str(mushroom)
 
 @
 
-Now that some basic data exploration is covered, next to inspect the dataset a bit further. Starting with the class (edidable) distribution in the mushroom dataset,
+Now that some basic data exploration is covered, next to inspect the dataset a bit further. Starting with the class (Edible) distribution in the mushroom dataset, see (Figure~\ref{fig1})
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
 #Class Distribution
 barplot(table(mushroom$Edible))
 @
-
+\begin{figure}[H]
+\begin{center}
 <<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
 barplot(table(mushroom$Edible))
 @
+\caption {Barplot of Class Distribution}
+\label{fig1}
+\end {center}
+\end {figure}
 
-
-Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it isEdible or Poisonous. Which is shown in the plot below.
+Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2}))below.
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
 
@@ -222,8 +228,32 @@ ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) +
                                           values=c('darkgreen','red'))
                                                                                 
 @
-\caption {Petal Length /Width per species in IRIS set}
+\caption {Comparisons of CapShape and CapSurface with Edible or Poisonous in Mushroom Dataset}
 \label{fig2}
+\end {center}
+\end {figure}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+
+#Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous
+ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=StalkSurfaceBelowRing, color=Edible)) + 
+  geom_jitter(alpha=0.3) +
+  scale_color_manual(breaks = c('Edible','Poisonous'), values=c('darkgreen','red'))          
+
+@
+
+\begin{figure}[H]
+\begin{center}
+<<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
+
+#Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous
+ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=StalkSurfaceBelowRing, color=Edible)) + 
+  geom_jitter(alpha=0.3) +
+  scale_color_manual(breaks = c('Edible','Poisonous'), values=c('darkgreen','red'))
+                                                                                
+@
+\caption {Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous}
+\label{fig3}
 \end {center}
 \end {figure}
 
@@ -231,74 +261,41 @@ ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) +
 
 \clearpage
 
+\subsection {Pre-Processing}
 
-% latex table generated in R 3.4.2 by xtable 1.8-2 package
-% Tue Apr 17 23:21:55 2018
-\begin{table}[ht]
-\centering
-\caption{Mushroom Data}
-\scalebox{0.75}{
-\begin{tabular}{p{1in}|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-  \hline
- & Edible & CapShape & CapSurface & CapColor & Bruises & Odor & GillAttachment & GillSpacing & GillSize & GillColor & StalkShape & StalkRoot & StalkSurfaceAboveRing & StalkSurfaceBelowRing & StalkColorAboveRing & StalkColorBelowRing & VeilType & VeilColor & RingNumber & RingType & SporePrintColor & Population & Habitat \\ 
-  \hline
-1 & Poisonous & Convex & Smooth & Brown & True & Pungent & Free & Close & Narrow & Black & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
-  2 & Edible & Convex & Smooth & Yellow & True & Almond & Free & Close & Broad & Black & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Grasses \\ 
-  3 & Edible & Bell & Smooth & White & True & Anise & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Meadows \\ 
-  4 & Poisonous & Convex & Scaly & White & True & Pungent & Free & Close & Narrow & Brown & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
-  5 & Edible & Convex & Smooth & Gray & False & None & Free & Crowded & Broad & Black & Tapering & Equal & Smooth & Smooth & White & White & Partial & White & One & Evanescent & Brown & Abundnant & Grasses \\ 
-  6 & Edible & Convex & Scaly & Yellow & True & Almond & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Numerous & Grasses \\ 
-   \hline
-\end{tabular}
-}
-\caption{test} 
-\label{tab:example}
-\end{table}
+Before the Mushroom dataset can be processed by a classification model(s), some pre-processing is required.
 
+While the helper function should take out all missing values, lets valdiate this before continuing.
 
-The good thing about the above approach is you can always refer to the table in your document. For example 'As can be seen in Table~\ref{tab1},...'
-
-\textbf{Figures:} are important part of your analysis, and also good way to give insight about the dataset you are working with. You will use packages like \textit{ggplot2} to produce some visuals. Lets start with a simple example to show how to present your visuals in the report with proper labels and captions. Remember, I need to see the code the produced the figure as well. \\
-
-Suppose, I just want to create a plot that shows the relation between Petal width and length and map the colour and shape to the Species (class label in my dataset). \\
-
-First, I will write my code, but notice that my chunk definition is set as follows\\ \textit{(<<warning=FALSE,message=FALSE,eval=FALSE>>=)}, I set warning and message to FALSE, because I don't want these warnings/ messages to appear in my final output. 
-
-
-<<warning=FALSE,message=FALSE,eval=FALSE>>=
-library(ggplot2)
-
-p <- ggplot(iris, aes(x=Petal.Length, 
-                      y = Petal.Width,color=Species) )
-p <- p+ geom_point(aes(shape=Species))
-p <- p + xlab('Petal Length')
-p <- p + ylab('Petal Width')
-p <- p + theme_bw()
-p
-
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Class Distribution
+table(complete.cases (mushroom))
 @
 
-Make sure that your code is running, and once everything is OK, then you need to insert the above code within a Latex code used to insert images (check the .rnw file to see how we achieved this). Again, remember the caption and the label which allows you to refer to this figure from anywhere in your document (Figure~\ref{fig1}). Notice the header of the chunk code in the \textit{.rnw} file. 
 
-\begin{figure}[H]
-\begin{center}
-
-<<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
-library(ggplot2)
-
-p <- ggplot(iris, aes(x=Petal.Length, 
-                      y = Petal.Width,color=Species) )
-p <- p+ geom_point(aes(shape=Species))
-p <- p + xlab('Petal Length')
-p <- p + ylab('Petal Width')
-p <- p + theme_bw()
-p
-
+<<warning=FALSE,echo=FALSE>>=
+#Class Distribution
+table(complete.cases (mushroom))
 @
-\caption {Petal Length /Width per species in IRIS set}
-\label{fig1}
-\end {center}
-\end {figure}
+
+As shown above, there is not any missing values in the dataset.
+
+The class (Edible) on the Mushroom dataset is then converted to a factor, this is due to way that certain classification models interact with the class feature of a dataset.
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Class Distribution
+mushroom$Edible <- as.factor(mushroom$Edible)
+@
+
+
+<<warning=FALSE,echo=FALSE>>=
+#Class Distribution
+mushroom$Edible <- as.factor(mushroom$Edible)
+@
+
+
+\clearpage
 
 
 
@@ -306,20 +303,68 @@ p
 
 
 
-\subsection {Divide into training and}
+\subsection {Divide into training and testing subset}
+
+When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with the conventional 70 percent
+training and 30 percent testing split as a starting point/baseline.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Divide the datset into 70% training and 30% testing.
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.7, list=FALSE)
+
+#Assign indexes to split the Mushroom dataset into training and testing
+training <- mushroom[inTrain,]
+testing <- mushroom[-inTrain,]
+@
+
+<<warning=FALSE,echo=FALSE>>=
+#Divide the datset into 70% training and 30% testing.
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.7, list=FALSE)
+
+#Assign indexes to split the Mushroom dataset into training and testing
+training <- mushroom[inTrain,]
+testing <- mushroom[-inTrain,]
+@
+
 
 
 \subsection{Build Classifier}
 
 
-Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
 
 
 
+\subsection{Improve Model Performance}
 
 
 
+\clearpage
 
+
+
+\section{Fine-grained Model}
+
+
+\subsection{Clustering Dataset}
+
+<<warning=FALSE,echo=FALSE>>=
+normalizeData <- function (x ) {
+return ( (x-min(x) ) / ( max(x)- min(x) ))
+}
+
+
+
+dfNew <- mushroom
+dfNew$VeilType <- NULL
+
+dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
+
+
+dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
+@
+
+
+\subsection{Adapting your Model}
 
 
 
@@ -362,26 +407,9 @@ I used a helper function to import the dataset, it helps with assigning the corr
 
 
 
-% \lstset{ %
-% basicstyle=\footnotesize,       % the size of the fonts that are used for the code
-% numbers=left,           % where to put the line-numbers
-% numberstyle=\footnotesize,  % the size of the fonts that are used for the line-numbers
-% stepnumber=1,           % the step between two line-numbers. If it is 1 each line will be numbered
-% numbersep=5pt,          % how far the line-numbers are from the code
-% backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
-% showspaces=false,           % show spaces adding particular underscores
-% showstringspaces=false,     % underline spaces within strings
-% showtabs=false,         % show tabs within strings adding particular underscores
-% frame=single,           % adds a frame around the code
-% tabsize=2,              % sets default tabsize to 2 spaces
-% captionpos=b,           % sets the caption-position to bottom
-% breaklines=true,            % sets automatic line breaking
-% breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
-% escapeinside={\%*}{*)},      % if you want to add a comment within your code
-% breaklines=true,
-%   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
-% }
-
+\begin{figure}[H]
+\caption {fetchAndCleanData Function for Mushroom dataset}
+\end {figure}
     \begin{lstlisting}
 fetchAndCleanData = function(){
   
@@ -628,11 +656,48 @@ fetchAndCleanData = function(){
   
   return(shrooms)
 }
-
 \end{lstlisting}
+\label{figHelper}
 
 
+\clearpage
 
+\begin{figure}[H]
+\caption {clustData function for clustering Mushroom dataset}
+\end {figure}
+    \begin{lstlisting}
+    #Clustering Function
+clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {
+  # use split function to split the dataset according to the class label
+  # a set of dataframes each representing a class label will be stored
+  # in dfs list()
+  dfs <- split (df, df[,ClassIndex])
+  # create empty list
+  clustList <- list()
+  n <- length(dfs)
+  for (i in 1:length(kmeansClasses)){
+    # Cluster according to all features excluding the label
+    if (kmeansClasses[i]>1 & kmeansClasses[i]< nrow(dfs[[i]])){
+      clustList[[i]] <- kmeans(dfs[[i]][,-ClassIndex],kmeansClasses[i])
+      #plotcluster(clustList[[i]], clustList[[i]]$cluster)
+      dfs[[i]]$cluster <- paste0((dfs[[i]][,ClassIndex]),
+                                 "_","c",clustList[[i]]$cluster)
+    }
+    else {
+      dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]),
+                                "_c0")
+    }
+  }
+  # put all list elements in a dataframe and return it
+  # note that ldply() require the library plyr
+  allClusteredElements <- ldply (dfs, data.frame)
+  # drop the first column 'id' resulting from ldply
+  allClusteredElements <- allClusteredElements[,-1]
+  allClusteredElements <- allClusteredElements[,-ClassIndex]
+  return(allClusteredElements)
+}
+\end{lstlisting}
+\label{figCluster}
 
 % Clear the page and starte a new page for references 
 

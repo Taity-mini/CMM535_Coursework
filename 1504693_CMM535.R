@@ -59,60 +59,80 @@ table(complete.cases (mushroom))
 
 #Modeling and Classification
 
-#Divide dataset into training and testing 
-mushroom$Edible <- as.factor(mushroom$Edible)
-
-mushroomCopy <- mushroom
-
-
 
 #Divide the datset into 70% training and 30% testing.
-inTrain <- createDataPartition(y=mushroom$Edible, p=.7, list=FALSE)
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.6, list=FALSE)
 
 #Assign indexes to split the Mushroom dataset into training and testing
 training <- mushroom[inTrain,]
 testing <- mushroom[-inTrain,]
 
-ncol(training)
 
-ncol(testing)
+#First set the seed for reproducibility
+set.seed(0)
+#Classification Models using caret
 
-#Random forest classification 
-library(randomForest)
-library(doParallel) 
 cl <- makeCluster(detectCores(), type='PSOCK')
 registerDoParallel(cl)
 
+train_control<- trainControl(method="cv", number=5)
 
-#Set initial trees value
-ntrees <- 100
-rf = randomForest(Edible ~ .,  
-                  ntree = 100,
-                  data = training)
-plot(rf)  
+# train the model using random forest
+RFModel2<- train(Edible~., data=training,
+                trControl=train_control,
+                method="rf"
+)
+
+#train the model using c5.0
+c50Model<- train(Edible~., data=training,
+                 trControl=train_control,
+                 method="C5.0"
+)
+
+RFModel
+
+predictRF <- predict(RFModel,testing)
+confusionMatrix(predictRF, testing$Edible)
+
+predictC50 <- predict(c50Model, testing)
+confusionMatrix(predictC50,testing$Edible)
 
 
-set.seed(0)
-df <- data.frame(ntrees =as.numeric(),
-                 Accuracy=as.numeric())
-system.time((for(i in 1:10){
-  
-RFModel = randomForest(Edible ~ .,  
-                  ntree = ntrees,
-                  data = training,
-                  mtry = 10,
-                  proximity = TRUE)
+# make predictions
+predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
+# append predictions (just for manual analysis)
+test<- cbind(testing,predictions)
+# summarize results
+results<- confusionMatrix(test$predictions,test$Edible)
 
-preds <- levels(training)[RFModel$test$predicted]
+results
 
-auc <- sum(preds == testing[,23]/nrow(testing))*100
-df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
+varImpPlot(RFModel2$finalModel,main = 'Variable Importance')
 
-ntrees <- ntrees + 100
-}))
-plot(rfModel)
 
-varImpPlot(RFModel,main = 'Variable Importance')
+actual <- clusteredDF$cluster
+
+
+# df <- data.frame(ntrees =as.numeric(),
+#                  Accuracy=as.numeric())
+# for(i in 1:10){
+#   
+# RFModel = randomForest(Edible ~ .,  
+#                   ntree = ntrees,
+#                   data = training,
+#                   mtry = 10,
+#                   proximity = TRUE)
+# 
+# preds <- levels(training)[RFModel$test$predicted]
+# 
+# auc <- sum(preds == testing[,23]/nrow(testing))*100
+# df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
+# 
+# ntrees <- ntrees + 100
+# }
+# plot(rfModel)
+# 
+# varImpPlot(RFModel,main = 'Variable Importance')
 
 
 
@@ -144,41 +164,27 @@ for(i in 1:10){
 print(RFModel)
 # turn parallel processing off and run sequentially again:
 registerDoSEQ()
-# comparing the running time for each loop
-system.time(x <- foreach(j=1:times ) %dopar% check(j))  #  2.56 seconds  (notice that the first run would be slower, because of R's lazy loading)
-system.time(for(j in 1:times ) x <- check(j))  #  4.82 seconds
 
-# stop workers
-stopWorkers(workers)
+
+
 
 
 # Clustering dataset
 
 
-library(data.table)
-fwrite(,,"some.name.temp")
-dfm <- fread("some.name.temp",colClasses="numeric")
-
-mushroom$StalkRoot <- NULL
- mushroom <- as.numeric(mushroom$Edible)
-
- str(mushroom) 
-
-
-
-#Copy dataset
-noClass <-mushroom
-#Remove class as it is not being transformed to binary
-noClass$Edible <- NULL
-
-binaryVars <- caret::dummyVars(~ ., data = noClass)
-newMushroom <- predict(binaryVars, newdata = noClass)
-
-#add class to binarised dataset
-binMushroom <-cbind(newMushroom, mushroom[1])
-str(binMushroom)
-
-summary(binMushroom)
+# #Copy dataset
+# noClass <-mushroom
+# #Remove class as it is not being transformed to binary
+# noClass$Edible <- NULL
+# 
+# binaryVars <- caret::dummyVars(~ ., data = noClass)
+# newMushroom <- predict(binaryVars, newdata = noClass)
+# 
+# #add class to binarised dataset
+# binMushroom <-cbind(newMushroom, mushroom[1])
+# str(binMushroom)
+# 
+# summary(binMushroom)
 
 
 df <- mushroom
@@ -204,11 +210,11 @@ str(mushroom)
 dfNew <- mushroom
 dfNew$VeilType <- NULL
 
-dfNew[,2:23] = lapply(dfNew[,2:23], as.numeric)
+dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
 
 
 dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
-dfN$VeilType <- NULL
+
 
 str(dfN)
 dfN$Edible <- dfNew$Edible
@@ -258,7 +264,6 @@ clustData <- function (df,ClassIndex, kmeansClasses = rep(0,unique(df[,ClassInde
   return (allClusteredElements)
   
 }
-
 
 #Clustering Function
 clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {

@@ -95,10 +95,6 @@
 % Notice the following package, it will help you cite papers
 \usepackage[backend=bibtex ,sorting=none]{biblatex}
 \bibliography{references}
-
-\begin{filecontents*}{references.bib}
-
-\end{filecontents*}
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
@@ -152,52 +148,7 @@ To start off the data explortation I will first import the required librarys.
 \end{kframe}
 \end{knitrout}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{#Import packages}
-\hlkwd{library}\hlstd{(randomForest)}
-\end{alltt}
 
-
-{\ttfamily\noindent\itshape\color{messagecolor}{randomForest 4.6-12}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{Type rfNews() to see new features/changes/bug fixes.}}\begin{alltt}
-\hlkwd{library}\hlstd{(e1071)}
-\hlkwd{library}\hlstd{(caret)}
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{Loading required package: lattice}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{Loading required package: ggplot2}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\\Attaching package: 'ggplot2'}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{The following object is masked from 'package:randomForest':
-
-\ \ \ \ margin}}\begin{alltt}
-\hlkwd{library}\hlstd{(ggplot2)}
-\hlkwd{library}\hlstd{(gridExtra)}
-\end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\\Attaching package: 'gridExtra'}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{The following object is masked from 'package:randomForest':
-
-\ \ \ \ combine}}\begin{alltt}
-\hlkwd{library}\hlstd{(caret)}
-\hlkwd{library}\hlstd{(rpart.plot)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{Error in library(rpart.plot): there is no package called 'rpart.plot'}}\begin{alltt}
-\hlkwd{library}\hlstd{(RColorBrewer)}
-\hlkwd{library}\hlstd{(plyr)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
 
 
 Then set the working directory to the Coursework project folder path:
@@ -209,7 +160,9 @@ Then set the working directory to the Coursework project folder path:
 \end{kframe}
 \end{knitrout}
 
-In order to import the dataset, I used a third party helper function, which can be viewed at Appdenix 1.
+
+
+In order to import the dataset, I used a third party helper function, which can be viewed at Figure .
 The helper function not only set the attributes names but the instances names as well. Since all the data is represented a single character, it converts them into their string equivalent.
 
 
@@ -227,23 +180,12 @@ The helper function not only set the attributes names but the instances names as
 \end{knitrout}
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{#helper function}
-\hlkwd{source}\hlstd{(}\hlstr{'helper_functions.r'}\hlstd{)}
 
-\hlcom{#Import datasets using helper function}
-
-\hlstd{mushroom} \hlkwb{<-} \hlkwd{fetchAndCleanData}\hlstd{()}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
 
 
 Now that the dataset is imported, it is time to do some data exploration and analysis.
 
-Number of rows in the dataset
+Number of rows in the dataset:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -263,7 +205,7 @@ Number of rows in the dataset
 \end{kframe}
 \end{knitrout}
 
-Number of columns (features) in the dataset
+Number of columns (features) in the dataset:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -282,12 +224,12 @@ Number of columns (features) in the dataset
 \end{kframe}
 \end{knitrout}
 
-Summary of the Mushroom dataset
+Summary of the Mushroom dataset:
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{#Summar of the Mushroom dataset}
+\hlcom{#Summary of the Mushroom dataset}
 \hlkwd{str}\hlstd{(mushroom)}
 \end{alltt}
 \end{kframe}
@@ -325,7 +267,7 @@ Summary of the Mushroom dataset
 \end{kframe}
 \end{knitrout}
 
-Now that some basic data exploration is covered, next to inspect the dataset a bit further. Starting with the class (edidable) distribution in the mushroom dataset,
+Now that some basic data exploration is covered, next to inspect the dataset a bit further. Starting with the class (Edible) distribution in the mushroom dataset, see (Figure~\ref{fig1})
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -335,15 +277,19 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
+\begin{figure}[H]
+\begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-13-1} 
+\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-14-1} 
 
 \end{knitrout}
+\caption {Barplot of Class Distribution}
+\label{fig1}
+\end {center}
+\end {figure}
 
-
-Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it isEdible or Poisonous. Which is shown in the plot below.
+Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2}))below.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -356,83 +302,91 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-\centering
-\caption{Mushroom Data}
+
+\begin{figure}[H]
+\begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-15-1} 
+\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-16-1} 
 
 \end{knitrout}
-\label{tab:example}
+\caption {Comparisons of CapShape and CapSurface with Edible or Poisonous in Mushroom Dataset}
+\label{fig2}
+\end {center}
+\end {figure}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous}
+\hlkwd{ggplot}\hlstd{(mushroom,}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=StalkSurfaceAboveRing,} \hlkwc{y}\hlstd{=StalkSurfaceBelowRing,} \hlkwc{color}\hlstd{=Edible))} \hlopt{+}
+  \hlkwd{geom_jitter}\hlstd{(}\hlkwc{alpha}\hlstd{=}\hlnum{0.3}\hlstd{)} \hlopt{+}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{breaks} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{'Edible'}\hlstd{,}\hlstr{'Poisonous'}\hlstd{),} \hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'darkgreen'}\hlstd{,}\hlstr{'red'}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{figure}[H]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-18-1} 
+
+\end{knitrout}
+\caption {Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous}
+\label{fig3}
+\end {center}
+\end {figure}
 
 
 
 \clearpage
 
+\subsection {Pre-Processing}
 
-% latex table generated in R 3.4.2 by xtable 1.8-2 package
-% Tue Apr 17 23:21:55 2018
-\begin{table}[ht]
-\centering
-\caption{Mushroom Data}
-\scalebox{0.75}{
-\begin{tabular}{p{1in}|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c}
-  \hline
- & Edible & CapShape & CapSurface & CapColor & Bruises & Odor & GillAttachment & GillSpacing & GillSize & GillColor & StalkShape & StalkRoot & StalkSurfaceAboveRing & StalkSurfaceBelowRing & StalkColorAboveRing & StalkColorBelowRing & VeilType & VeilColor & RingNumber & RingType & SporePrintColor & Population & Habitat \\ 
-  \hline
-1 & Poisonous & Convex & Smooth & Brown & True & Pungent & Free & Close & Narrow & Black & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
-  2 & Edible & Convex & Smooth & Yellow & True & Almond & Free & Close & Broad & Black & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Grasses \\ 
-  3 & Edible & Bell & Smooth & White & True & Anise & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Brown & Numerous & Meadows \\ 
-  4 & Poisonous & Convex & Scaly & White & True & Pungent & Free & Close & Narrow & Brown & Enlarging & Equal & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Scattered & Urban \\ 
-  5 & Edible & Convex & Smooth & Gray & False & None & Free & Crowded & Broad & Black & Tapering & Equal & Smooth & Smooth & White & White & Partial & White & One & Evanescent & Brown & Abundnant & Grasses \\ 
-  6 & Edible & Convex & Scaly & Yellow & True & Almond & Free & Close & Broad & Brown & Enlarging & Club & Smooth & Smooth & White & White & Partial & White & One & Pendant & Black & Numerous & Grasses \\ 
-   \hline
-\end{tabular}
-}
-\caption{test} 
-\label{tab:example}
-\end{table}
+Before the Mushroom dataset can be processed by a classification model(s), some pre-processing is required.
+
+While the helper function should take out all missing values, lets valdiate this before continuing.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Class Distribution}
+\hlkwd{table}\hlstd{(}\hlkwd{complete.cases} \hlstd{(mushroom))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
-The good thing about the above approach is you can always refer to the table in your document. For example 'As can be seen in Table~\ref{tab1},...'
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## 
+## TRUE 
+## 8124
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
-\textbf{Figures:} are important part of your analysis, and also good way to give insight about the dataset you are working with. You will use packages like \textit{ggplot2} to produce some visuals. Lets start with a simple example to show how to present your visuals in the report with proper labels and captions. Remember, I need to see the code the produced the figure as well. \\
+As shown above, there is not any missing values in the dataset.
 
-Suppose, I just want to create a plot that shows the relation between Petal width and length and map the colour and shape to the Species (class label in my dataset). \\
-
-First, I will write my code, but notice that my chunk definition is set as follows\\ \textit{(<<warning=FALSE,message=FALSE,eval=FALSE>>=)}, I set warning and message to FALSE, because I don't want these warnings/ messages to appear in my final output. 
+The class (Edible) on the Mushroom dataset is then converted to a factor, this is due to way that certain classification models interact with the class feature of a dataset.
 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{library}\hlstd{(ggplot2)}
-
-\hlstd{p} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(iris,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=Petal.Length,}
-                      \hlkwc{y} \hlstd{= Petal.Width,}\hlkwc{color}\hlstd{=Species) )}
-\hlstd{p} \hlkwb{<-} \hlstd{p}\hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{shape}\hlstd{=Species))}
-\hlstd{p} \hlkwb{<-} \hlstd{p} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{'Petal Length'}\hlstd{)}
-\hlstd{p} \hlkwb{<-} \hlstd{p} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{'Petal Width'}\hlstd{)}
-\hlstd{p} \hlkwb{<-} \hlstd{p} \hlopt{+} \hlkwd{theme_bw}\hlstd{()}
-\hlstd{p}
+\hlcom{#Class Distribution}
+\hlstd{mushroom}\hlopt{$}\hlstd{Edible} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(mushroom}\hlopt{$}\hlstd{Edible)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-Make sure that your code is running, and once everything is OK, then you need to insert the above code within a Latex code used to insert images (check the .rnw file to see how we achieved this). Again, remember the caption and the label which allows you to refer to this figure from anywhere in your document (Figure~\ref{fig1}). Notice the header of the chunk code in the \textit{.rnw} file. 
 
-\begin{figure}[H]
-\begin{center}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-17-1} 
 
-\end{knitrout}
-\caption {Petal Length /Width per species in IRIS set}
-\label{fig1}
-\end {center}
-\end {figure}
+
+\clearpage
 
 
 
@@ -440,20 +394,51 @@ Make sure that your code is running, and once everything is OK, then you need to
 
 
 
-\subsection {Divide into training and}
+\subsection {Divide into training and testing subset}
+
+When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with the conventional 70 percent
+training and 30 percent testing split as a starting point/baseline.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Divide the datset into 70% training and 30% testing.}
+\hlstd{inTrain} \hlkwb{<-} \hlkwd{createDataPartition}\hlstd{(}\hlkwc{y}\hlstd{=mushroom}\hlopt{$}\hlstd{Edible,} \hlkwc{p}\hlstd{=}\hlnum{0.7}\hlstd{,} \hlkwc{list}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+
+\hlcom{#Assign indexes to split the Mushroom dataset into training and testing}
+\hlstd{training} \hlkwb{<-} \hlstd{mushroom[inTrain,]}
+\hlstd{testing} \hlkwb{<-} \hlstd{mushroom[}\hlopt{-}\hlstd{inTrain,]}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
 
 
 \subsection{Build Classifier}
 
 
-Complete this part as required by the coursework sheet. Again, be clear, visuals always helps in communicating results. Justify your choices and explain your methods. 
+
+
+
+\subsection{Improve Model Performance}
+
+
+
+\clearpage
+
+
+
+\section{Fine-grained Model}
+
+
+\subsection{Clustering Dataset}
 
 
 
 
-
-
-
+\subsection{Adapting your Model}
 
 
 
@@ -496,26 +481,9 @@ I used a helper function to import the dataset, it helps with assigning the corr
 
 
 
-% \lstset{ %
-% basicstyle=\footnotesize,       % the size of the fonts that are used for the code
-% numbers=left,           % where to put the line-numbers
-% numberstyle=\footnotesize,  % the size of the fonts that are used for the line-numbers
-% stepnumber=1,           % the step between two line-numbers. If it is 1 each line will be numbered
-% numbersep=5pt,          % how far the line-numbers are from the code
-% backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
-% showspaces=false,           % show spaces adding particular underscores
-% showstringspaces=false,     % underline spaces within strings
-% showtabs=false,         % show tabs within strings adding particular underscores
-% frame=single,           % adds a frame around the code
-% tabsize=2,              % sets default tabsize to 2 spaces
-% captionpos=b,           % sets the caption-position to bottom
-% breaklines=true,            % sets automatic line breaking
-% breakatwhitespace=false,        % sets if automatic breaks should only happen at whitespace
-% escapeinside={\%*}{*)},      % if you want to add a comment within your code
-% breaklines=true,
-%   postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space}
-% }
-
+\begin{figure}[H]
+\caption {fetchAndCleanData Function for Mushroom dataset}
+\end {figure}
     \begin{lstlisting}
 fetchAndCleanData = function(){
   
@@ -762,11 +730,48 @@ fetchAndCleanData = function(){
   
   return(shrooms)
 }
-
 \end{lstlisting}
+\label{figHelper}
 
 
+\clearpage
 
+\begin{figure}[H]
+\caption {clustData function for clustering Mushroom dataset}
+\end {figure}
+    \begin{lstlisting}
+    #Clustering Function
+clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {
+  # use split function to split the dataset according to the class label
+  # a set of dataframes each representing a class label will be stored
+  # in dfs list()
+  dfs <- split (df, df[,ClassIndex])
+  # create empty list
+  clustList <- list()
+  n <- length(dfs)
+  for (i in 1:length(kmeansClasses)){
+    # Cluster according to all features excluding the label
+    if (kmeansClasses[i]>1 & kmeansClasses[i]< nrow(dfs[[i]])){
+      clustList[[i]] <- kmeans(dfs[[i]][,-ClassIndex],kmeansClasses[i])
+      #plotcluster(clustList[[i]], clustList[[i]]$cluster)
+      dfs[[i]]$cluster <- paste0((dfs[[i]][,ClassIndex]),
+                                 "_","c",clustList[[i]]$cluster)
+    }
+    else {
+      dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]),
+                                "_c0")
+    }
+  }
+  # put all list elements in a dataframe and return it
+  # note that ldply() require the library plyr
+  allClusteredElements <- ldply (dfs, data.frame)
+  # drop the first column 'id' resulting from ldply
+  allClusteredElements <- allClusteredElements[,-1]
+  allClusteredElements <- allClusteredElements[,-ClassIndex]
+  return(allClusteredElements)
+}
+\end{lstlisting}
+\label{figCluster}
 
 % Clear the page and starte a new page for references 
 
