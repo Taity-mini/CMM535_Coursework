@@ -10,6 +10,7 @@ library(RColorBrewer)
 library(plyr)
 library(dplyr)
 library(doParallel)
+library(xtable)
 
 #helper function
 source('helper_functions.r')
@@ -54,8 +55,6 @@ ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=StalkSurfaceBelowRing, color=Edib
 
 
 ##Preprocess dataset
-
-
 
 #Remove missing values
 table(complete.cases (mushroom))
@@ -103,7 +102,6 @@ confusionMatrix(predictkNN, testing$Edible)
 
 
 
-
 #First set the seed for reproducibility
 set.seed(1)
 
@@ -137,8 +135,6 @@ confusionMatrix(predictC50,testing$Edible)
 
 
 
-
-
 # make predictions
 predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
 # append predictions (just for manual analysis)
@@ -149,61 +145,13 @@ results<- confusionMatrix(test$predictions,test$Edible)
 
 results
 
-varImpPlot(RFModel2$finalModel,main = 'Variable Importance')
+varImpPlot(RFModel$finalModel,main = 'Variable Importance')
 
 
 actual <- clusteredDF$cluster
 
 
-# df <- data.frame(ntrees =as.numeric(),
-#                  Accuracy=as.numeric())
-# for(i in 1:10){
-#   
-# RFModel = randomForest(Edible ~ .,  
-#                   ntree = ntrees,
-#                   data = training,
-#                   mtry = 10,
-#                   proximity = TRUE)
-# 
-# preds <- levels(training)[RFModel$test$predicted]
-# 
-# auc <- sum(preds == testing[,23]/nrow(testing))*100
-# df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
-# 
-# ntrees <- ntrees + 100
-# }
-# plot(rfModel)
-# 
-# varImpPlot(RFModel,main = 'Variable Importance')
 
-
-
-  
-
-
-# 
-# 
-# for(i in 1:10){
-#   RFModel <- randomForest(
-#           training[,-23],
-#           testing[,-23],
-#           
-#           xtest = testing[,-23],
-#           ytest = testing[,23],
-#           ntree = ntrees,
-#           mtry = 10,
-#           proximity = TRUE
-#   )
-#   
-#   preds <- levels(training[,23])[RFModel$test$predicted]
-#   
-#   auc <- sum(preds == testing[,23]/nrow(testing))*100
-#   df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
-#   
-#   ntrees <- ntrees + 100
-# }
-# 
-# print(RFModel)
 
 # turn parallel processing off and run sequentially again:
 registerDoSEQ()
@@ -234,16 +182,16 @@ bwplot(rs, layout = c(4, 1))
 # summary(binMushroom)
 
 
-df <- mushroom
-
-dfN <- as.data.frame(lapply(newMushroom[,], normalizeData) )
-# add the label
-dfN$Species <- df$Species
-clusteredDF <- clustData(dfN,ncol(df), c(2,2,2))
-
-clusteredDF <- clustData(mushroom ,ncol(mushroom)-1, c(2,2,2))
-
-str(df)
+# df <- mushroom
+# 
+# dfN <- as.data.frame(lapply(newMushroom[,], normalizeData) )
+# # add the label
+# dfN$Species <- df$Species
+# clusteredDF <- clustData(dfN,ncol(df), c(2,2,2))
+# 
+# clusteredDF <- clustData(mushroom ,ncol(mushroom)-1, c(2,2,2))
+# 
+# str(df)
 
 
 
@@ -271,46 +219,102 @@ table(complete.cases (dfN))
 
 clusteredDF <- clustData(dfN,ncol(dfNew), c(2,2))
 
+summary(clusteredDF$cluster)
+
+autoplot(clusteredDF)
+
 head(clusteredDF,20)
 table(clusteredDF$cluster)
 
-dfU <- clustData(dfN,ncol(binAdult),rep(2,length(unique(dfN[,ncol(binAdult)]))))
 
-dfU <- transform(mushroom, class=as.numeric(as.character(mushroom)))
 
-# clustData <- function (df,ClassIndex, kmeansClasses = rep(0,unique(df[,ClassIndex]))){
-#   
-#   
-#   dfs <- split(df,df[,ClassIndex])
-#   
-#   clustList <- list()
-#   
-#   n <- length(dfs)
-#   
-#   for(i in 1:length(kmeansClasses)){
-#     if(kmeansClasses[i] >1 & kmeansClasses[i] < nrow(dfs[i])){
-#       
-#       clustList[[i]] <- kmean(dfs[[i]][,-ClassIndex], kmeansClasses[i])
-#       
-#       dfs[[i]]$cluster <- paste0((dfs[i][,ClassIndex]),
-#                                  "_", "c", clustList[[i]]$cluster)
-#   
-#     }
-#     else{
-#       dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]), 
-#                                 "_c0")
-#     }
-#   }
-#   
-#   
-#   allClusteredElements <- ldply (dfs, data.frame)
-#   allClusteredElements <- allClusteredElements[,-1]
-#   
-#   allClusteredElements <- allClusteredElements[,ClassIndex]
-#   
-#   return (allClusteredElements)
-#   
-# }
+
+#Adapting the model
+
+#Divide the datset into 60% training and 40% testing. To avoid overfitting
+inTrainCluster <- createDataPartition(y=clusteredDF$cluster, p=0.6, list=FALSE)
+
+
+#Assign indexes to split the Mushroom dataset into training and testing
+trainingCluster <- clusteredDF[inTrainCluster,]
+testingCluster <- clusteredDF[-inTrainCluster,]
+
+#set train control to cross-validation with 5 folds
+train_controlCluster<- trainControl(method="cv", number=10,verboseIter=FALSE)
+
+
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModelCluster<- train(cluster~., data=trainingCluster,
+                trControl=train_controlCluster,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+
+#Show Random forest model
+RFModelCluster
+
+#Predict the accuracy and display using a confusion matrix
+predictRFCluster <- predict(RFModelCluster,testingCluster)
+confusionMatrix(predictRFCluster, testingCluster$cluster)
+
+
+#Results
+
+
+#Split the actual results
+actual <- testingCluster$cluster
+
+str(actual)
+
+#Split the predicted Results
+pred <- predictRFCluster
+str(pred)
+
+
+#Combine the actual and predicted results into a dataframe.
+cols = data.frame("Actual" = actual, "Predicted" = pred)
+
+
+#Convert the both the actual and predict results to characters
+cols$Actual <- as.character(cols$Actual)
+cols$Predicted <- as.character(cols$Predicted)
+
+str(cols)
+
+#Loop for all the rows in cols dataframe
+for(row in 1:nrow(cols)){
+  
+  #split actual/pred again within for loop
+  actualRow <- cols$Actual[row]
+  predRow <- cols$Predicted[row]
+  
+  #Remove the last three characters in the actual/predicted results 
+  # then check if they are the same
+  results[row] <- substr(actualRow, 0,nchar(actualRow)-3)== substr(predRow,0, nchar(predRow)-3)
+  
+  #If results are the same(TRUE) then set 'Yes' otherwise then 'No'
+  if(results[row] == TRUE){
+    results[row] <- 'Yes'
+  } else{
+    results[row] <- 'No'
+  }
+}
+
+#Bind the actual, predicted and correct results together.
+finalResults = cbind(cols, "Correct" =results)
+
+#Head of the final results
+xtable(head(finalResults,10))
+
+#Tail of the final results
+xtable(tail(finalResults,10))
+
+
+
 
 #Clustering Function
 clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {
@@ -342,8 +346,6 @@ clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex
   allClusteredElements <- allClusteredElements[,-ClassIndex]
   return(allClusteredElements)
 }
-
-
 
 
 

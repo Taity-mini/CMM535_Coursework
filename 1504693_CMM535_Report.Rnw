@@ -26,6 +26,7 @@
 \usepackage{tabularx}
 \usepackage{lmodern} % for bold teletype font
 \usepackage{minted}
+\usepackage{underscore}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -83,7 +84,7 @@ The main purpose of the Mushroom dataset is to identify which characteristics (a
 Therefore the aim of this assignment is to build a predictive model to predict if a certain type of Mushroom is ediable or not.
 
 
-To start off the data explortation I will first import the required librarys.
+To start off the data explortation I will first import the required packages.
 
 <<warning=FALSE,eval=FALSE,comment=FALSE>>=
 #Import packages
@@ -98,6 +99,7 @@ library(RColorBrewer)
 library(plyr)
 library(dplyr)
 library(doParallel)
+library(xtable)
 @
 
 <<warning=FALSE,echo=FALSE, comment=FALSE, message=FALSE>>==
@@ -113,6 +115,7 @@ library(RColorBrewer)
 library(plyr)
 library(dplyr)
 library(doParallel)
+library(xtable)
 @
 
 
@@ -566,12 +569,47 @@ return ( (x-min(x) ) / ( max(x)- min(x) ))
 @
 
 
-<<warning=FALSE,echo=FALSE>>=
+
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
 normalizeData <- function (x ) {
 return ( (x-min(x) ) / ( max(x)- min(x) ))
 }
 @
 
+
+% Clustering function to run (displayed as a listing at the end of the doc)
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
+#Clustering Function
+clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {
+  # use split function to split the dataset according to the class label
+  # a set of dataframes each representing a class label will be stored
+  # in dfs list()
+  dfs <- split (df, df[,ClassIndex])
+  # create empty list
+  clustList <- list()
+  n <- length(dfs)
+  for (i in 1:length(kmeansClasses)){
+    # Cluster according to all features excluding the label
+    if (kmeansClasses[i]>1 & kmeansClasses[i]< nrow(dfs[[i]])){
+      clustList[[i]] <- kmeans(dfs[[i]][,-ClassIndex],kmeansClasses[i])
+      #plotcluster(clustList[[i]], clustList[[i]]$cluster)
+      dfs[[i]]$cluster <- paste0((dfs[[i]][,ClassIndex]),
+                                 "_","c",clustList[[i]]$cluster)
+    }
+    else {
+      dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]),
+                                "_c0")
+    }
+  }
+  # put all list elements in a dataframe and return it
+  # note that ldply() require the library plyr
+  allClusteredElements <- ldply (dfs, data.frame)
+  # drop the first column 'id' resulting from ldply
+  allClusteredElements <- allClusteredElements[,-1]
+  allClusteredElements <- allClusteredElements[,-ClassIndex]
+  return(allClusteredElements)
+}
+@
 
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
@@ -586,7 +624,6 @@ dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
 dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
 @
 
-
 <<warning=FALSE,echo=FALSE>>=
 
 
@@ -599,24 +636,200 @@ dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
 
 ##Then use the normalise function from above
 dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
+
 @
 
 
 
+\subsubsection{Clustering using clustData function}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+str(dfN)
+dfN$Edible <- dfNew$Edible
+
+table(complete.cases (dfN))
+
+
+@
+
+
+<<warning=FALSE,echo=FALSE>>=
+str(dfN)
+dfN$Edible <- dfNew$Edible
+
+table(complete.cases (dfN))
+
+
+@
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+clusteredDF <- clustData(dfN,ncol(dfNew), c(2,2))
+head(clusteredDF,10)
+@
+
+<<warning=FALSE,echo=FALSE>>=
+clusteredDF <- clustData(dfN,ncol(dfNew), c(2,2))
+head(clusteredDF,10)
+@
+
+\clearpage
 \subsection{Adapting your Model}
 
 
+\subsubsection{Refitting Random Forest to Clustering}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Adapting the model
+
+#Divide the datset into 60% training and 40% testing.
+inTrainCluster <- createDataPartition(y=clusteredDF$cluster, p=0.6, list=FALSE)
+
+
+
+#Assign indexes to split the Mushroom dataset into training and testing
+trainingCluster <- clusteredDF[inTrainCluster,]
+testingCluster <- clusteredDF[-inTrainCluster,]
+
+#set train control to cross-validation with 5 folds
+train_controlCluster<- trainControl(method="cv", number=10,verboseIter=FALSE)
+
+@
+
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Adapting the model
+
+#Divide the datset into 60% training and 40% testing.
+inTrainCluster <- createDataPartition(y=clusteredDF$cluster, p=0.6, list=FALSE)
+
+
+#Assign indexes to split the Mushroom dataset into training and testing
+trainingCluster <- clusteredDF[inTrainCluster,]
+testingCluster <- clusteredDF[-inTrainCluster,]
+
+#set train control to cross-validation with 5 folds
+train_controlCluster<- trainControl(method="cv", number=10,verboseIter=FALSE)
+@
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModelCluster<- train(cluster~., data=trainingCluster,
+                trControl=train_controlCluster,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+#Show Random forest model
+RFModelCluster
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModelCluster<- train(cluster~., data=trainingCluster,
+                trControl=train_controlCluster,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+#Show Random forest model
+RFModelCluster
+@
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Predict the accuracy and display using a confusion matrix
+predictRFCluster <- predict(RFModelCluster,testingCluster)
+confusionMatrix(predictRFCluster, testingCluster$cluster)
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Predict the accuracy and display using a confusion matrix
+predictRFCluster <- predict(RFModelCluster,testingCluster)
+confusionMatrix(predictRFCluster, testingCluster$cluster)
+@
+
+
+\clearpage
+\subsubsection{Results}
+
+
+% latex table generated in R 3.4.2 by xtable 1.8-2 package
+% Sun Apr 22 15:14:57 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Edible\_c1 & Edible\_c2 & Poisonous\_c1 & Poisonous\_c2 \\ 
+  \hline
+Edible\_c1 & 1145 &   0 &   0 &   0 \\ 
+  Edible\_c2 &   0 & 537 &   0 &   0 \\ 
+  Poisonous\_c1 &   0 &   0 & 704 &   0 \\ 
+  Poisonous\_c2 &   0 &   0 &   0 & 862 \\ 
+   \hline
+\end{tabular}
+\end{table}
 
 
 
 
+% Final Results Table (top 10)
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlll}
+  \hline
+ & Actual & Predicted & Correct \\ 
+  \hline
+1 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  2 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  3 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  4 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  5 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  6 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  7 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  8 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  9 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  10 & Edible\_c1 & Edible\_c1 & Yes \\ 
+   \hline
+\end{tabular}
+\end{table}
 
-% Clear the page and starte a new page for references 
+
+% Final Results Table (last 10)
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlll}
+  \hline
+ & Actual & Predicted & Correct \\ 
+  \hline
+3239 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3240 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3241 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3242 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3243 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3244 & Poisonous\_c2 & Poisonous\_c2 & Yes \\ 
+  3245 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3246 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3247 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3248 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
 
 \clearpage
 % The title for the reference section is called References 
 
-\section{Appendix}\label{pubs}
+\section{Appendix}
 
 \subsection{Mushroom Dataset Helper Function}
 

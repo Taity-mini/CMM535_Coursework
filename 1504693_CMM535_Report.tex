@@ -76,6 +76,7 @@
 \usepackage{tabularx}
 \usepackage{lmodern} % for bold teletype font
 \usepackage{minted}
+\usepackage{underscore}
 
 \usepackage{hyperref}
 \hypersetup{
@@ -130,7 +131,7 @@ The main purpose of the Mushroom dataset is to identify which characteristics (a
 Therefore the aim of this assignment is to build a predictive model to predict if a certain type of Mushroom is ediable or not.
 
 
-To start off the data explortation I will first import the required librarys.
+To start off the data explortation I will first import the required packages.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -147,6 +148,7 @@ To start off the data explortation I will first import the required librarys.
 \hlkwd{library}\hlstd{(plyr)}
 \hlkwd{library}\hlstd{(dplyr)}
 \hlkwd{library}\hlstd{(doParallel)}
+\hlkwd{library}\hlstd{(xtable)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -893,6 +895,10 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
+% Clustering function to run (displayed as a listing at the end of the doc)
+
+
+
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -913,21 +919,325 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
+\subsubsection{Clustering using clustData function}
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{str}\hlstd{(dfN)}
+\hlstd{dfN}\hlopt{$}\hlstd{Edible} \hlkwb{<-} \hlstd{dfNew}\hlopt{$}\hlstd{Edible}
+
+\hlkwd{table}\hlstd{(}\hlkwd{complete.cases} \hlstd{(dfN))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## 'data.frame':	8124 obs. of  21 variables:
+##  $ CapShape             : num  0.4 0.4 0 0.4 0.4 0.4 0 0 0.4 0 ...
+##  $ CapSurface           : num  1 1 1 0.667 1 ...
+##  $ CapColor             : num  0 1 0.889 0.889 0.333 ...
+##  $ Bruises              : num  0 0 0 0 1 0 0 0 0 0 ...
+##  $ Odor                 : num  0.875 0 0.125 0.875 0.75 0 0 0.125 0.875 0 ...
+##  $ GillAttachment       : num  1 1 1 1 1 1 1 1 1 1 ...
+##  $ GillSpacing          : num  0 0 0 0 1 0 0 0 0 0 ...
+##  $ GillSize             : num  1 0 0 1 0 0 0 0 1 0 ...
+##  $ GillColor            : num  0 0 0.0909 0.0909 0 ...
+##  $ StalkShape           : num  0 0 0 0 1 0 0 0 0 0 ...
+##  $ StalkRoot            : num  0.5 0.167 0.167 0.5 0.5 ...
+##  $ StalkSurfaceAboveRing: num  1 1 1 1 1 1 1 1 1 1 ...
+##  $ StalkSurfaceBelowRing: num  1 1 1 1 1 1 1 1 1 1 ...
+##  $ StalkColorAboveRing  : num  0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 ...
+##  $ StalkColorBelowRing  : num  0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 0.875 ...
+##  $ VeilColor            : num  0.667 0.667 0.667 0.667 0.667 ...
+##  $ RingNumber           : num  0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5 ...
+##  $ RingType             : num  1 1 1 1 0 1 1 1 1 1 ...
+##  $ SporePrintColor      : num  0 0.125 0.125 0 0.125 0 0 0.125 0 0 ...
+##  $ Population           : num  0.6 0.4 0.4 0.6 0 0.4 0.4 0.6 0.8 0.6 ...
+##  $ Habitat              : num  0.667 0 0.333 0.667 0 ...
+## 
+## TRUE 
+## 8124
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{clusteredDF} \hlkwb{<-} \hlkwd{clustData}\hlstd{(dfN,}\hlkwd{ncol}\hlstd{(dfNew),} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{head}\hlstd{(clusteredDF,}\hlnum{10}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##    CapShape CapSurface  CapColor Bruises  Odor GillAttachment GillSpacing
+## 1       0.4  1.0000000 1.0000000       0 0.000              1           0
+## 2       0.0  1.0000000 0.8888889       0 0.125              1           0
+## 3       0.4  1.0000000 0.3333333       1 0.750              1           1
+## 4       0.4  0.6666667 1.0000000       0 0.000              1           0
+## 5       0.0  1.0000000 0.8888889       0 0.000              1           0
+## 6       0.0  0.6666667 0.8888889       0 0.125              1           0
+## 7       0.0  1.0000000 1.0000000       0 0.000              1           0
+## 8       0.4  0.6666667 1.0000000       0 0.125              1           0
+## 9       0.4  0.6666667 1.0000000       0 0.000              1           0
+## 10      0.0  1.0000000 1.0000000       0 0.000              1           0
+##    GillSize  GillColor StalkShape StalkRoot StalkSurfaceAboveRing
+## 1         0 0.00000000          0 0.1666667                     1
+## 2         0 0.09090909          0 0.1666667                     1
+## 3         0 0.00000000          1 0.5000000                     1
+## 4         0 0.09090909          0 0.1666667                     1
+## 5         0 0.36363636          0 0.1666667                     1
+## 6         0 0.09090909          0 0.1666667                     1
+## 7         0 0.36363636          0 0.1666667                     1
+## 8         0 0.36363636          0 0.1666667                     1
+## 9         0 0.09090909          0 0.1666667                     1
+## 10        0 0.90909091          0 0.1666667                     1
+##    StalkSurfaceBelowRing StalkColorAboveRing StalkColorBelowRing VeilColor
+## 1                      1               0.875               0.875 0.6666667
+## 2                      1               0.875               0.875 0.6666667
+## 3                      1               0.875               0.875 0.6666667
+## 4                      1               0.875               0.875 0.6666667
+## 5                      1               0.875               0.875 0.6666667
+## 6                      1               0.875               0.875 0.6666667
+## 7                      1               0.875               0.875 0.6666667
+## 8                      1               0.875               0.875 0.6666667
+## 9                      1               0.875               0.875 0.6666667
+## 10                     1               0.875               0.875 0.6666667
+##    RingNumber RingType SporePrintColor Population   Habitat   cluster
+## 1         0.5        1           0.125        0.4 0.0000000 Edible_c2
+## 2         0.5        1           0.125        0.4 0.3333333 Edible_c2
+## 3         0.5        0           0.125        0.0 0.0000000 Edible_c2
+## 4         0.5        1           0.000        0.4 0.0000000 Edible_c2
+## 5         0.5        1           0.000        0.4 0.3333333 Edible_c2
+## 6         0.5        1           0.125        0.6 0.3333333 Edible_c2
+## 7         0.5        1           0.000        0.6 0.3333333 Edible_c2
+## 8         0.5        1           0.125        0.4 0.0000000 Edible_c2
+## 9         0.5        1           0.000        0.6 0.3333333 Edible_c2
+## 10        0.5        1           0.125        0.6 0.0000000 Edible_c2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\clearpage
 \subsection{Adapting your Model}
 
 
+\subsubsection{Refitting Random Forest to Clustering}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Adapting the model}
+
+\hlcom{#Divide the datset into 60% training and 40% testing.}
+\hlstd{inTrainCluster} \hlkwb{<-} \hlkwd{createDataPartition}\hlstd{(}\hlkwc{y}\hlstd{=clusteredDF}\hlopt{$}\hlstd{cluster,} \hlkwc{p}\hlstd{=}\hlnum{0.6}\hlstd{,} \hlkwc{list}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+
+
+
+\hlcom{#Assign indexes to split the Mushroom dataset into training and testing}
+\hlstd{trainingCluster} \hlkwb{<-} \hlstd{clusteredDF[inTrainCluster,]}
+\hlstd{testingCluster} \hlkwb{<-} \hlstd{clusteredDF[}\hlopt{-}\hlstd{inTrainCluster,]}
+
+\hlcom{#set train control to cross-validation with 5 folds}
+\hlstd{train_controlCluster}\hlkwb{<-} \hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,} \hlkwc{number}\hlstd{=}\hlnum{10}\hlstd{,}\hlkwc{verboseIter}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 
 
 
-% Clear the page and starte a new page for references 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#First set the seed for reproducibility}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+
+\hlcom{# train the model using random forest}
+\hlstd{RFModelCluster}\hlkwb{<-} \hlkwd{train}\hlstd{(cluster}\hlopt{~}\hlstd{.,} \hlkwc{data}\hlstd{=trainingCluster,}
+                \hlkwc{trControl}\hlstd{=train_controlCluster,}
+                \hlkwc{method}\hlstd{=}\hlstr{"rf"}\hlstd{,}
+                \hlkwc{tuneLength} \hlstd{=}\hlnum{10}\hlstd{,}
+                \hlkwc{metric} \hlstd{=} \hlstr{'Accuracy'}
+\hlstd{)}
+\hlcom{#Show Random forest model}
+\hlstd{RFModelCluster}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Random Forest 
+## 
+## 4876 samples
+##   21 predictor
+##    4 classes: 'Edible_c1', 'Edible_c2', 'Poisonous_c1', 'Poisonous_c2' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 4388, 4388, 4387, 4389, 4389, 4388, ... 
+## Resampling results across tuning parameters:
+## 
+##   mtry  Accuracy   Kappa    
+##    2    0.9993852  0.9991760
+##    4    0.9993852  0.9991760
+##    6    0.9993852  0.9991760
+##    8    0.9993852  0.9991760
+##   10    0.9993852  0.9991760
+##   12    0.9993852  0.9991760
+##   14    0.9993852  0.9991760
+##   16    0.9993852  0.9991760
+##   18    0.9993852  0.9991760
+##   21    0.9995902  0.9994507
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was mtry = 21.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Predict the accuracy and display using a confusion matrix}
+\hlstd{predictRFCluster} \hlkwb{<-} \hlkwd{predict}\hlstd{(RFModelCluster,testingCluster)}
+\hlkwd{confusionMatrix}\hlstd{(predictRFCluster, testingCluster}\hlopt{$}\hlstd{cluster)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##               Reference
+## Prediction     Edible_c1 Edible_c2 Poisonous_c1 Poisonous_c2
+##   Edible_c1          732         1            0            0
+##   Edible_c2            0       949            0            0
+##   Poisonous_c1         0         0          862            0
+##   Poisonous_c2         0         0            0          704
+## 
+## Overall Statistics
+##                                      
+##                Accuracy : 0.9997     
+##                  95% CI : (0.9983, 1)
+##     No Information Rate : 0.2925     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 0.9996     
+##  Mcnemar's Test P-Value : NA         
+## 
+## Statistics by Class:
+## 
+##                      Class: Edible_c1 Class: Edible_c2 Class: Poisonous_c1
+## Sensitivity                    1.0000           0.9989              1.0000
+## Specificity                    0.9996           1.0000              1.0000
+## Pos Pred Value                 0.9986           1.0000              1.0000
+## Neg Pred Value                 1.0000           0.9996              1.0000
+## Prevalence                     0.2254           0.2925              0.2654
+## Detection Rate                 0.2254           0.2922              0.2654
+## Detection Prevalence           0.2257           0.2922              0.2654
+## Balanced Accuracy              0.9998           0.9995              1.0000
+##                      Class: Poisonous_c2
+## Sensitivity                       1.0000
+## Specificity                       1.0000
+## Pos Pred Value                    1.0000
+## Neg Pred Value                    1.0000
+## Prevalence                        0.2167
+## Detection Rate                    0.2167
+## Detection Prevalence              0.2167
+## Balanced Accuracy                 1.0000
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\clearpage
+\subsubsection{Results}
+
+
+% latex table generated in R 3.4.2 by xtable 1.8-2 package
+% Sun Apr 22 15:14:57 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Edible\_c1 & Edible\_c2 & Poisonous\_c1 & Poisonous\_c2 \\ 
+  \hline
+Edible\_c1 & 1145 &   0 &   0 &   0 \\ 
+  Edible\_c2 &   0 & 537 &   0 &   0 \\ 
+  Poisonous\_c1 &   0 &   0 & 704 &   0 \\ 
+  Poisonous\_c2 &   0 &   0 &   0 & 862 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+
+
+% Final Results Table (top 10)
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlll}
+  \hline
+ & Actual & Predicted & Correct \\ 
+  \hline
+1 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  2 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  3 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  4 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  5 & Edible\_c2 & Edible\_c2 & Yes \\ 
+  6 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  7 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  8 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  9 & Edible\_c1 & Edible\_c1 & Yes \\ 
+  10 & Edible\_c1 & Edible\_c1 & Yes \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+% Final Results Table (last 10)
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlll}
+  \hline
+ & Actual & Predicted & Correct \\ 
+  \hline
+3239 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3240 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3241 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3242 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3243 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3244 & Poisonous\_c2 & Poisonous\_c2 & Yes \\ 
+  3245 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3246 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3247 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+  3248 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
 
 \clearpage
 % The title for the reference section is called References 
 
-\section{Appendix}\label{pubs}
+\section{Appendix}
 
 \subsection{Mushroom Dataset Helper Function}
 
