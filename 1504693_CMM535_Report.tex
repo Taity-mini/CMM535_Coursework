@@ -118,7 +118,8 @@
 \subsection{Dataset Choice}
 The dataset that has been chosen for this part of the coursework is Mushroom. This is available on the UCI repository. The set was chosen because of it's adequate instance size and number of attributes.
 
-.
+\url{http://archive.ics.uci.edu/ml/datasets/Mushroom}
+
 
 
 \subsection{Problem Statement and Data Exploration}
@@ -144,6 +145,8 @@ To start off the data explortation I will first import the required librarys.
 \hlkwd{library}\hlstd{(rpart.plot)}
 \hlkwd{library}\hlstd{(RColorBrewer)}
 \hlkwd{library}\hlstd{(plyr)}
+\hlkwd{library}\hlstd{(dplyr)}
+\hlkwd{library}\hlstd{(doParallel)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -162,7 +165,7 @@ Then set the working directory to the Coursework project folder path:
 
 
 
-In order to import the dataset, I used a third party helper function, which can be viewed at Figure .
+In order to import the dataset, I used a third party helper function, which can be viewed at (Figure~\ref{figHelper})  .
 The helper function not only set the attributes names but the instances names as well. Since all the data is represented a single character, it converts them into their string equivalent.
 
 
@@ -289,7 +292,7 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 \end {center}
 \end {figure}
 
-Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2}))below.
+Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2})) below.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -370,21 +373,6 @@ While the helper function should take out all missing values, lets valdiate this
 
 As shown above, there is not any missing values in the dataset.
 
-The class (Edible) on the Mushroom dataset is then converted to a factor, this is due to way that certain classification models interact with the class feature of a dataset.
-
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{#Class Distribution}
-\hlstd{mushroom}\hlopt{$}\hlstd{Edible} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(mushroom}\hlopt{$}\hlstd{Edible)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
-
-
 
 \clearpage
 
@@ -418,12 +406,465 @@ training and 30 percent testing split as a starting point/baseline.
 
 \subsection{Build Classifier}
 
+For the initial classifier I decided to go with the kNN Classifer as it has proven to be a good baseline in previous labs and exercises in R.
 
 
+
+Before the classification begins, parallel processing is enabled to speed up this process.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Setup Parallel processing to speed up classification modelling }
+\hlstd{cl} \hlkwb{<-} \hlkwd{makeCluster}\hlstd{(}\hlkwd{detectCores}\hlstd{(),} \hlkwc{type}\hlstd{=}\hlstr{'PSOCK'}\hlstd{)}
+\hlkwd{registerDoParallel}\hlstd{(cl)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+The train control is set to cross-validation with 5 folds:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#set train control to cross-validation with 5 folds}
+\hlstd{train_control}\hlkwb{<-} \hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,} \hlkwc{number}\hlstd{=}\hlnum{5}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+% 
+% Next the seed is set to 1, in order to make the module reproducible and the kNN model is set up with the train_control from above and the tunelength of 20.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#First set the seed for reproducibility}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+
+\hlcom{#train model using kNN}
+\hlstd{kNNModel} \hlkwb{<-} \hlkwd{train}\hlstd{(Edible} \hlopt{~} \hlstd{.,} \hlkwc{data} \hlstd{= training,}
+                  \hlkwc{trControl} \hlstd{= train_control,}
+                  \hlkwc{tuneLength} \hlstd{=} \hlnum{20}\hlstd{,}
+                  \hlkwc{method} \hlstd{=} \hlstr{"knn"}
+\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+Once the knn Model is complete, it's time to analyse the results, first with a print of the kNNModel as shown below.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Show the kNN model results}
+\hlstd{kNNModel}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## k-Nearest Neighbors 
+## 
+## 5688 samples
+##   22 predictor
+##    2 classes: 'Edible', 'Poisonous' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling results across tuning parameters:
+## 
+##   k   Accuracy   Kappa    
+##    5  0.9992964  0.9985907
+##    7  0.9989446  0.9978860
+##    9  0.9987687  0.9975336
+##   11  0.9984169  0.9968289
+##   13  0.9980654  0.9961249
+##   15  0.9978895  0.9957725
+##   17  0.9980654  0.9961249
+##   19  0.9975377  0.9950681
+##   21  0.9973618  0.9947159
+##   23  0.9975377  0.9950683
+##   25  0.9971863  0.9943648
+##   27  0.9966591  0.9933090
+##   29  0.9959561  0.9919015
+##   31  0.9954287  0.9908461
+##   33  0.9950768  0.9901412
+##   35  0.9945492  0.9890853
+##   37  0.9940215  0.9880294
+##   39  0.9933181  0.9866213
+##   41  0.9920878  0.9841591
+##   43  0.9908568  0.9816959
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was k = 5.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Next is a confusion matrix is created by predicting the accuracy against the testing subset.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Predict the accuracy of the kNN Model against the testing set}
+\hlstd{predictkNN} \hlkwb{<-} \hlkwd{predict}\hlstd{(kNNModel,testing)}
+\hlkwd{confusionMatrix}\hlstd{(predictkNN, testing}\hlopt{$}\hlstd{Edible)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##            Reference
+## Prediction  Edible Poisonous
+##   Edible      1262         0
+##   Poisonous      0      1174
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9985, 1)
+##     No Information Rate : 0.5181     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar's Test P-Value : NA         
+##                                      
+##             Sensitivity : 1.0000     
+##             Specificity : 1.0000     
+##          Pos Pred Value : 1.0000     
+##          Neg Pred Value : 1.0000     
+##              Prevalence : 0.5181     
+##          Detection Rate : 0.5181     
+##    Detection Prevalence : 0.5181     
+##       Balanced Accuracy : 1.0000     
+##                                      
+##        'Positive' Class : Edible     
+## 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\clearpage
 
 
 \subsection{Improve Model Performance}
 
+\subsubsection{C5.0 Model}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#First set the seed for reproducibility}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+
+\hlcom{#train the model using c5.0}
+\hlstd{c50Model}\hlkwb{<-} \hlkwd{train}\hlstd{(Edible}\hlopt{~}\hlstd{.,} \hlkwc{data}\hlstd{=training,}
+                 \hlkwc{trControl}\hlstd{=train_control,}
+                 \hlkwc{tuneLength}\hlstd{=}\hlnum{5}\hlstd{,}
+                 \hlkwc{method}\hlstd{=}\hlstr{"C5.0"}
+\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Show the c50Model results}
+ \hlstd{c50Model}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## C5.0 
+## 
+## 5688 samples
+##   22 predictor
+##    2 classes: 'Edible', 'Poisonous' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling results across tuning parameters:
+## 
+##   model  winnow  trials  Accuracy   Kappa    
+##   rules  FALSE    1      1.0000000  1.0000000
+##   rules  FALSE   10      1.0000000  1.0000000
+##   rules  FALSE   20      1.0000000  1.0000000
+##   rules  FALSE   30      1.0000000  1.0000000
+##   rules  FALSE   40      1.0000000  1.0000000
+##   rules  FALSE   50      1.0000000  1.0000000
+##   rules  FALSE   60      1.0000000  1.0000000
+##   rules  FALSE   70      1.0000000  1.0000000
+##   rules  FALSE   80      1.0000000  1.0000000
+##   rules  FALSE   90      1.0000000  1.0000000
+##   rules   TRUE    1      0.9991216  0.9982406
+##   rules   TRUE   10      1.0000000  1.0000000
+##   rules   TRUE   20      1.0000000  1.0000000
+##   rules   TRUE   30      1.0000000  1.0000000
+##   rules   TRUE   40      0.9996485  0.9992961
+##   rules   TRUE   50      0.9996485  0.9992961
+##   rules   TRUE   60      0.9996485  0.9992961
+##   rules   TRUE   70      0.9996485  0.9992961
+##   rules   TRUE   80      0.9996485  0.9992961
+##   rules   TRUE   90      0.9996485  0.9992961
+##   tree   FALSE    1      1.0000000  1.0000000
+##   tree   FALSE   10      1.0000000  1.0000000
+##   tree   FALSE   20      1.0000000  1.0000000
+##   tree   FALSE   30      1.0000000  1.0000000
+##   tree   FALSE   40      1.0000000  1.0000000
+##   tree   FALSE   50      1.0000000  1.0000000
+##   tree   FALSE   60      1.0000000  1.0000000
+##   tree   FALSE   70      1.0000000  1.0000000
+##   tree   FALSE   80      1.0000000  1.0000000
+##   tree   FALSE   90      1.0000000  1.0000000
+##   tree    TRUE    1      0.9994728  0.9989440
+##   tree    TRUE   10      1.0000000  1.0000000
+##   tree    TRUE   20      1.0000000  1.0000000
+##   tree    TRUE   30      1.0000000  1.0000000
+##   tree    TRUE   40      1.0000000  1.0000000
+##   tree    TRUE   50      1.0000000  1.0000000
+##   tree    TRUE   60      1.0000000  1.0000000
+##   tree    TRUE   70      1.0000000  1.0000000
+##   tree    TRUE   80      1.0000000  1.0000000
+##   tree    TRUE   90      1.0000000  1.0000000
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final values used for the model were trials = 1, model = rules
+##  and winnow = FALSE.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{predictC50} \hlkwb{<-} \hlkwd{predict}\hlstd{(c50Model, testing)}
+\hlkwd{confusionMatrix}\hlstd{(predictC50,testing}\hlopt{$}\hlstd{Edible)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##            Reference
+## Prediction  Edible Poisonous
+##   Edible      1262         0
+##   Poisonous      0      1174
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9985, 1)
+##     No Information Rate : 0.5181     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar's Test P-Value : NA         
+##                                      
+##             Sensitivity : 1.0000     
+##             Specificity : 1.0000     
+##          Pos Pred Value : 1.0000     
+##          Neg Pred Value : 1.0000     
+##              Prevalence : 0.5181     
+##          Detection Rate : 0.5181     
+##    Detection Prevalence : 0.5181     
+##       Balanced Accuracy : 1.0000     
+##                                      
+##        'Positive' Class : Edible     
+## 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\clearpage
+
+\subsubsection{Random forest Model}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#First set the seed for reproducibility}
+\hlkwd{set.seed}\hlstd{(}\hlnum{1}\hlstd{)}
+
+\hlcom{# train the model using random forest}
+\hlstd{RFModel}\hlkwb{<-} \hlkwd{train}\hlstd{(Edible}\hlopt{~}\hlstd{.,} \hlkwc{data}\hlstd{=training,}
+                \hlkwc{trControl}\hlstd{=train_control,}
+                \hlkwc{method}\hlstd{=}\hlstr{"rf"}\hlstd{,}
+                \hlkwc{tuneLength} \hlstd{=}\hlnum{10}\hlstd{,}
+                \hlkwc{metric} \hlstd{=} \hlstr{'Accuracy'}
+\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{RFModel}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Random Forest 
+## 
+## 5688 samples
+##   22 predictor
+##    2 classes: 'Edible', 'Poisonous' 
+## 
+## No pre-processing
+## Resampling: Cross-Validated (5 fold) 
+## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling results across tuning parameters:
+## 
+##   mtry  Accuracy   Kappa    
+##     2   0.8957470  0.7896431
+##    26   1.0000000  1.0000000
+##    50   1.0000000  1.0000000
+##    75   1.0000000  1.0000000
+##    99   1.0000000  1.0000000
+##   123   0.9998241  0.9996477
+##   148   0.9998241  0.9996477
+##   172   0.9996484  0.9992958
+##   196   0.9996484  0.9992958
+##   221   0.9996484  0.9992958
+## 
+## Accuracy was used to select the optimal model using the largest value.
+## The final value used for the model was mtry = 26.
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{predictRF} \hlkwb{<-} \hlkwd{predict}\hlstd{(RFModel,testing)}
+\hlkwd{confusionMatrix}\hlstd{(predictRF, testing}\hlopt{$}\hlstd{Edible)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##            Reference
+## Prediction  Edible Poisonous
+##   Edible      1262         0
+##   Poisonous      0      1174
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9985, 1)
+##     No Information Rate : 0.5181     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar's Test P-Value : NA         
+##                                      
+##             Sensitivity : 1.0000     
+##             Specificity : 1.0000     
+##          Pos Pred Value : 1.0000     
+##          Neg Pred Value : 1.0000     
+##              Prevalence : 0.5181     
+##          Detection Rate : 0.5181     
+##    Detection Prevalence : 0.5181     
+##       Balanced Accuracy : 1.0000     
+##                                      
+##        'Positive' Class : Edible     
+## 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+\clearpage
+
+
+\subsubsection{Comparison of all Models}
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##            Reference
+## Prediction  Edible Poisonous
+##   Edible      1262         0
+##   Poisonous      0      1174
+##                                      
+##                Accuracy : 1          
+##                  95% CI : (0.9985, 1)
+##     No Information Rate : 0.5181     
+##     P-Value [Acc > NIR] : < 2.2e-16  
+##                                      
+##                   Kappa : 1          
+##  Mcnemar's Test P-Value : NA         
+##                                      
+##             Sensitivity : 1.0000     
+##             Specificity : 1.0000     
+##          Pos Pred Value : 1.0000     
+##          Neg Pred Value : 1.0000     
+##              Prevalence : 0.5181     
+##          Detection Rate : 0.5181     
+##    Detection Prevalence : 0.5181     
+##       Balanced Accuracy : 1.0000     
+##                                      
+##        'Positive' Class : Edible     
+## 
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 
 \clearpage
@@ -434,6 +875,41 @@ training and 30 percent testing split as a starting point/baseline.
 
 
 \subsection{Clustering Dataset}
+
+\subsubsection{Pre-processing}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{normalizeData} \hlkwb{<-} \hlkwa{function} \hlstd{(}\hlkwc{x} \hlstd{) \{}
+\hlkwd{return} \hlstd{( (x}\hlopt{-}\hlkwd{min}\hlstd{(x) )} \hlopt{/} \hlstd{(} \hlkwd{max}\hlstd{(x)}\hlopt{-} \hlkwd{min}\hlstd{(x) ))}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Copy the dataset before pre-processing }
+\hlstd{dfNew} \hlkwb{<-} \hlstd{mushroom}
+\hlstd{dfNew}\hlopt{$}\hlstd{VeilType} \hlkwb{<-} \hlkwa{NULL}
+
+\hlcom{#Convert the dataframe to numeric values}
+\hlstd{dfNew[,}\hlnum{2}\hlopt{:}\hlnum{22}\hlstd{]} \hlkwb{=} \hlkwd{lapply}\hlstd{(dfNew[,}\hlnum{2}\hlopt{:}\hlnum{22}\hlstd{], as.numeric)}
+
+\hlcom{##Then use the normalise function from above}
+\hlstd{dfN} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(}\hlkwd{lapply}\hlstd{(dfNew[,}\hlopt{-}\hlnum{1}\hlstd{], normalizeData))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
 
 
 
@@ -457,6 +933,7 @@ training and 30 percent testing split as a starting point/baseline.
 
 I used a helper function to import the dataset, it helps with assigning the correct column and row names to the dataset. It also removes any missing values from the dateset.
 
+\url{https://github.com/stoltzmaniac/Mushroom-Classification/blob/master/helper_functions.R}
 
 \lstset{ 
   language=R,                     % the language of the code
@@ -772,18 +1249,6 @@ clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex
 }
 \end{lstlisting}
 \label{figCluster}
-
-% Clear the page and starte a new page for references 
-
-\clearpage
-% The title for the reference section is called References 
-
-\section{References}\label{pubs}
-
-\printbibliography[heading =none]
-
-
-\clearpage
 
 
 \end{document}

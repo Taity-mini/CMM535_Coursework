@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.4.17)  20 APR 2018 16:07
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6500 64-bit) (preloaded format=pdflatex 2018.4.17)  22 APR 2018 12:07
 entering extended mode
 **./1504693_CMM535_Report.tex
 (1504693_CMM535_Report.tex
@@ -1526,11 +1526,7 @@ File: english.lbx 2017/12/19 v3.10 biblatex localization (PK/JW/AB)
 \@quotelevel=\count360
 \@quotereset=\count361
 
-(1504693_CMM535_Report.aux
-
-LaTeX Warning: Label `pubs' multiply defined.
-
-)
+(1504693_CMM535_Report.aux)
 \openout1 = `1504693_CMM535_Report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 99.
@@ -1547,7 +1543,8 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 99.
 LaTeX Font Info:    ... okay on input line 99.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 99.
 LaTeX Font Info:    Try loading font information for TS1+cmr on input line 99.
- ("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\base\ts1cmr.fd"
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    ... okay on input line 99.
@@ -1629,24 +1626,57 @@ Underfull \hbox (badness 10000) in paragraph at lines 107--111
 
  []
 
-
-Package xcolor Warning: Incompatible color definition on input line 135.
-
-LaTeX Font Info:    Try loading font information for OT1+lmtt on input line 136
+LaTeX Font Info:    Try loading font information for OT1+lmtt on input line 121
 .
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ot1lmtt.fd"
 File: ot1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 121.
+
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omllmm.fd"
+File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 121
+.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omslmsy.fd"
+File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 121
+.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\lm\omxlmex.fd"
+File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 121.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 121.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 121.
+LaTeX Font Info:    Try loading font information for U+msa on input line 121.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 121.
+
+("C:\Program Files\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+
+Package xcolor Warning: Incompatible color definition on input line 136.
+
 LaTeX Font Info:    Font shape `OT1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 138.
+(Font)              Font shape `OT1/lmtt/b/n' tried instead on input line 139.
+
+Package xcolor Warning: Incompatible color definition on input line 159.
 
 
-Package xcolor Warning: Incompatible color definition on input line 156.
+Package xcolor Warning: Incompatible color definition on input line 173.
 
-
-Package xcolor Warning: Incompatible color definition on input line 170.
-
-LaTeX Font Info:    Try loading font information for TS1+lmtt on input line 173
+LaTeX Font Info:    Try loading font information for TS1+lmtt on input line 176
 .
 ("C:\Program Files\MiKTeX 2.9\tex\latex\lm\ts1lmtt.fd"
 File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1654,215 +1684,292 @@ File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 
 {C:/Users/user/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
 
-Package xcolor Warning: Incompatible color definition on input line 191.
+Package xcolor Warning: Incompatible color definition on input line 194.
 
 
-Package xcolor Warning: Incompatible color definition on input line 201.
+Package xcolor Warning: Incompatible color definition on input line 204.
 
 
-Package xcolor Warning: Incompatible color definition on input line 211.
+Package xcolor Warning: Incompatible color definition on input line 214.
 
 
-Package xcolor Warning: Incompatible color definition on input line 220.
+Package xcolor Warning: Incompatible color definition on input line 223.
 
 
-Package xcolor Warning: Incompatible color definition on input line 230.
+Package xcolor Warning: Incompatible color definition on input line 233.
 
 
-Package xcolor Warning: Incompatible color definition on input line 240.
+Package xcolor Warning: Incompatible color definition on input line 243.
 
 
-Overfull \hbox (18.49359pt too wide) in paragraph at lines 243--243
+Overfull \hbox (18.49359pt too wide) in paragraph at lines 246--246
 []\OT1/lmtt/m/n/10 ##  $ Edible               : Factor w/ 2 levels "Edible","Po
 isonous": 2 1 1 2 1 1 1 1 2 1 ...[] 
  []
 
 
-Overfull \hbox (13.2436pt too wide) in paragraph at lines 244--244
+Overfull \hbox (13.2436pt too wide) in paragraph at lines 247--247
 []\OT1/lmtt/m/n/10 ##  $ CapShape             : Factor w/ 12 levels "b","c","f"
 ,"k",..: 9 9 7 9 9 9 7 7 9 7 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 245--245
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 248--248
 []\OT1/lmtt/m/n/10 ##  $ CapSurface           : Factor w/ 8 levels "f","g","s",
 "y",..: 8 8 8 7 8 7 8 7 7 8 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 246--246
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 249--249
 []\OT1/lmtt/m/n/10 ##  $ CapColor             : Factor w/ 20 levels "b","c","e"
 ,"g",..: 11 20 19 19 14 20 19 19 19 20 ...[] 
  []
 
 
-Overfull \hbox (2.74364pt too wide) in paragraph at lines 247--247
+Overfull \hbox (2.74364pt too wide) in paragraph at lines 250--250
 []\OT1/lmtt/m/n/10 ##  $ Bruises              : Factor w/ 4 levels "f","t","Tru
 e",..: 3 3 3 3 4 3 3 3 3 3 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 248--248
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 251--251
 []\OT1/lmtt/m/n/10 ##  $ Odor                 : Factor w/ 18 levels "a","c","f"
 ,"l",..: 17 10 11 17 16 10 10 11 17 10 ...[] 
  []
 
 
-Overfull \hbox (23.74358pt too wide) in paragraph at lines 249--249
+Overfull \hbox (23.74358pt too wide) in paragraph at lines 252--252
 []\OT1/lmtt/m/n/10 ##  $ GillAttachment       : Factor w/ 6 levels "a","f","Att
 ached",..: 5 5 5 5 5 5 5 5 5 5 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 250--250
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 253--253
 []\OT1/lmtt/m/n/10 ##  $ GillSpacing          : Factor w/ 5 levels "c","w","Clo
 se",..: 3 3 3 3 4 3 3 3 3 3 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 251--251
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 254--254
 []\OT1/lmtt/m/n/10 ##  $ GillSize             : Factor w/ 4 levels "b","n","Bro
 ad",..: 4 3 3 4 3 3 3 3 4 3 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 252--252
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 255--255
 []\OT1/lmtt/m/n/10 ##  $ GillColor            : Factor w/ 24 levels "b","e","g"
 ,"h",..: 13 13 14 14 13 14 17 14 20 17 ...[] 
  []
 
 
-Overfull \hbox (28.99356pt too wide) in paragraph at lines 253--253
+Overfull \hbox (28.99356pt too wide) in paragraph at lines 256--256
 []\OT1/lmtt/m/n/10 ##  $ StalkShape           : Factor w/ 4 levels "e","t","Enl
 arging",..: 3 3 3 3 4 3 3 3 3 3 ...[] 
  []
 
 
-Overfull \hbox (13.2436pt too wide) in paragraph at lines 254--254
+Overfull \hbox (13.2436pt too wide) in paragraph at lines 257--257
 []\OT1/lmtt/m/n/10 ##  $ StalkRoot            : Factor w/ 12 levels "?","b","c"
 ,"e",..: 9 7 7 9 9 7 7 7 9 7 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 255--255
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 258--258
 []\OT1/lmtt/m/n/10 ##  $ StalkSurfaceAboveRing: Factor w/ 8 levels "f","k","s",
 "y",..: 8 8 8 8 8 8 8 8 8 8 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 256--256
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 259--259
 []\OT1/lmtt/m/n/10 ##  $ StalkSurfaceBelowRing: Factor w/ 8 levels "f","k","s",
 "y",..: 8 8 8 8 8 8 8 8 8 8 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 257--257
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 260--260
 []\OT1/lmtt/m/n/10 ##  $ StalkColorAboveRing  : Factor w/ 18 levels "b","c","e"
 ,"g",..: 17 17 17 17 17 17 17 17 17 17 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 258--258
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 261--261
 []\OT1/lmtt/m/n/10 ##  $ StalkColorBelowRing  : Factor w/ 18 levels "b","c","e"
 ,"g",..: 17 17 17 17 17 17 17 17 17 17 ...[] 
  []
 
 
-Overfull \hbox (7.99362pt too wide) in paragraph at lines 260--260
+Overfull \hbox (7.99362pt too wide) in paragraph at lines 263--263
 []\OT1/lmtt/m/n/10 ##  $ VeilColor            : Factor w/ 8 levels "n","o","w",
 "y",..: 7 7 7 7 7 7 7 7 7 7 ...[] 
  []
 
 
-Overfull \hbox (23.74358pt too wide) in paragraph at lines 261--261
+Overfull \hbox (23.74358pt too wide) in paragraph at lines 264--264
 []\OT1/lmtt/m/n/10 ##  $ RingNumber           : Factor w/ 6 levels "n","o","t",
 "None",..: 5 5 5 5 5 5 5 5 5 5 ...[] 
  []
 
 
-Overfull \hbox (60.49347pt too wide) in paragraph at lines 262--262
+Overfull \hbox (60.49347pt too wide) in paragraph at lines 265--265
 []\OT1/lmtt/m/n/10 ##  $ RingType             : Factor w/ 13 levels "e","f","l"
 ,"n",..: 11 11 11 11 7 11 11 11 11 11 ...[] 
  []
 
 
-Overfull \hbox (65.74345pt too wide) in paragraph at lines 263--263
+Overfull \hbox (65.74345pt too wide) in paragraph at lines 266--266
 []\OT1/lmtt/m/n/10 ##  $ SporePrintColor      : Factor w/ 18 levels "b","h","k"
 ,"n",..: 10 11 11 10 11 10 10 11 10 10 ...[] 
  []
 
 
-Overfull \hbox (39.49353pt too wide) in paragraph at lines 264--264
+Overfull \hbox (39.49353pt too wide) in paragraph at lines 267--267
 []\OT1/lmtt/m/n/10 ##  $ Population           : Factor w/ 12 levels "a","c","n"
 ,"s",..: 10 9 9 10 7 9 9 10 11 10 ...[] 
  []
 
 
-Overfull \hbox (44.74352pt too wide) in paragraph at lines 265--265
+Overfull \hbox (44.74352pt too wide) in paragraph at lines 268--268
 []\OT1/lmtt/m/n/10 ##  $ Habitat              : Factor w/ 14 levels "d","g","l"
 ,"m",..: 12 8 10 12 8 8 10 10 8 10 ...[] 
  []
 
 
-Package xcolor Warning: Incompatible color definition on input line 273.
+Package xcolor Warning: Incompatible color definition on input line 276.
 
 [2]
 
-Package xcolor Warning: Incompatible color definition on input line 283.
+Package xcolor Warning: Incompatible color definition on input line 286.
 
-<figure/unnamed-chunk-14-1.pdf, id=83, pagebox=cropbox, 505.89pt x 325.215pt>
+<figure/unnamed-chunk-14-1.pdf, id=98, pagebox=cropbox, 505.89pt x 325.215pt>
 File: figure/unnamed-chunk-14-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-14-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 284.
- on input line 284.
+Package pdftex.def Info: figure/unnamed-chunk-14-1.pdf  used on input line 287.
+ on input line 287.
 Package pdftex.def Info: Requested size: 357.0112pt x 229.50983pt on input line
- 284.
+ 287.
 
-Package xcolor Warning: Incompatible color definition on input line 295.
+Package xcolor Warning: Incompatible color definition on input line 298.
 
 
-Package xcolor Warning: Incompatible color definition on input line 309.
+Package xcolor Warning: Incompatible color definition on input line 312.
 
-<figure/unnamed-chunk-16-1.pdf, id=85, pagebox=cropbox, 505.89pt x 325.215pt>
+<figure/unnamed-chunk-16-1.pdf, id=100, pagebox=cropbox, 505.89pt x 325.215pt>
 File: figure/unnamed-chunk-16-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-16-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-16-1.pdf  used on input line 310.
- on input line 310.
+Package pdftex.def Info: figure/unnamed-chunk-16-1.pdf  used on input line 313.
+ on input line 313.
 Package pdftex.def Info: Requested size: 357.0112pt x 229.50983pt on input line
- 310.
+ 313.
 [3 <./figure/unnamed-chunk-14-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 319.
+Package xcolor Warning: Incompatible color definition on input line 322.
 
 
-Package xcolor Warning: Incompatible color definition on input line 332.
+Package xcolor Warning: Incompatible color definition on input line 335.
 
-<figure/unnamed-chunk-18-1.pdf, id=96, pagebox=cropbox, 505.89pt x 325.215pt>
+<figure/unnamed-chunk-18-1.pdf, id=111, pagebox=cropbox, 505.89pt x 325.215pt>
 File: figure/unnamed-chunk-18-1.pdf Graphic file (type pdf)
 <use figure/unnamed-chunk-18-1.pdf>
-Package pdftex.def Info: figure/unnamed-chunk-18-1.pdf  used on input line 333.
- on input line 333.
+Package pdftex.def Info: figure/unnamed-chunk-18-1.pdf  used on input line 336.
+ on input line 336.
 Package pdftex.def Info: Requested size: 357.0112pt x 229.50983pt on input line
- 333.
+ 336.
 [4 <./figure/unnamed-chunk-16-1.pdf> <./figure/unnamed-chunk-18-1.pdf>]
 
-Package xcolor Warning: Incompatible color definition on input line 352.
+Package xcolor Warning: Incompatible color definition on input line 355.
 
 
-Package xcolor Warning: Incompatible color definition on input line 362.
-
-
-Package xcolor Warning: Incompatible color definition on input line 377.
+Package xcolor Warning: Incompatible color definition on input line 365.
 
 [5
 
 ]
 
-Package xcolor Warning: Incompatible color definition on input line 403.
+Package xcolor Warning: Incompatible color definition on input line 391.
+
+
+Package xcolor Warning: Incompatible color definition on input line 416.
+
+
+Package xcolor Warning: Incompatible color definition on input line 429.
+
+
+Package xcolor Warning: Incompatible color definition on input line 442.
+
+
+Package xcolor Warning: Incompatible color definition on input line 463.
+
+
+Package xcolor Warning: Incompatible color definition on input line 474.
 
 [6
 
-] [7
+]
+
+Package xcolor Warning: Incompatible color definition on input line 519.
+
+
+Package xcolor Warning: Incompatible color definition on input line 531.
+
+[7] [8]
+
+Package xcolor Warning: Incompatible color definition on input line 574.
+
+
+Package xcolor Warning: Incompatible color definition on input line 594.
+
+
+Package xcolor Warning: Incompatible color definition on input line 606.
+
+[9
+
+]
+
+Package xcolor Warning: Incompatible color definition on input line 671.
+
+
+Package xcolor Warning: Incompatible color definition on input line 683.
+
+[10]
+
+Package xcolor Warning: Incompatible color definition on input line 723.
+
+
+Package xcolor Warning: Incompatible color definition on input line 743.
+
+
+Package xcolor Warning: Incompatible color definition on input line 752.
+
+
+Package xcolor Warning: Incompatible color definition on input line 784.
+
+
+Package xcolor Warning: Incompatible color definition on input line 794.
+
+[11
+
+] [12]
+
+Package xcolor Warning: Incompatible color definition on input line 837.
+
+[13
+
+]
+
+Package xcolor Warning: Incompatible color definition on input line 882.
+
+LaTeX Font Info:    Try loading font information for OMS+lmtt on input line 884
+.
+LaTeX Font Info:    No file OMSlmtt.fd. on input line 884.
+
+LaTeX Font Warning: Font shape `OMS/lmtt/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 884.
+
+
+Package xcolor Warning: Incompatible color definition on input line 897.
+
+[14
 
 ] ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang1.sty"
 File: lstlang1.sty 2015/06/04 1.6 listings language file
@@ -1872,54 +1979,50 @@ File: lstlang2.sty 2015/06/04 1.6 listings language file
 )
 ("C:\Program Files\MiKTeX 2.9\tex\latex\listings\lstlang3.sty"
 File: lstlang3.sty 2015/06/04 1.6 listings language file
-) [8
+) [15
 
-] [9]
-[10] [11
-
-]
-
-LaTeX Warning: Empty bibliography on input line 783.
-
-[12
+] [16]
+[17] [18
 
 ]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 789.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 789.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1254.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1254.
  (1504693_CMM535_Report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 789.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 789.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1254.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1254.
+
 Package rerunfilecheck Info: File `1504693_CMM535_Report.out' has not changed.
-(rerunfilecheck)             Checksum: 626456EFA9F03D28FBCA2617E873E9F5;928.
+(rerunfilecheck)             Checksum: 40343D929AF495578C2808D404CF61BC;1192.
 
 
-LaTeX Warning: There were multiply-defined labels.
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 Package logreq Info: Writing requests to '1504693_CMM535_Report.run.xml'.
 \openout1 = `1504693_CMM535_Report.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 30252 strings out of 493312
- 549028 string characters out of 3138902
- 1743785 words of memory out of 3000000
- 32999 multiletter control sequences out of 15000+200000
- 30335 words of font info for 28 fonts, out of 3000000 for 9000
+ 30336 strings out of 493312
+ 550577 string characters out of 3138902
+ 1758785 words of memory out of 3000000
+ 33042 multiletter control sequences out of 15000+200000
+ 39666 words of font info for 43 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 62i,6n,92p,1168b,2512s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 62i,6n,92p,1168b,2511s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.enc}{C:/Program Files/
 MiKTeX 2.9/fonts/enc/dvips/lm/lm-rmtt.enc}{C:/Program Files/MiKTeX 2.9/fonts/en
-c/dvips/lm/lm-rm.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmbx12.
-pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmr10.pfb><C:/Program Fi
-les/MiKTeX 2.9/fonts/type1/public/lm/lmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
-ts/type1/public/lm/lmr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm
-/lmri12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtk10.pfb><C:/P
-rogram Files/MiKTeX 2.9/fonts/type1/public/lm/lmtt10.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/public/lm/lmtt8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1
-/public/lm/lmtti10.pfb>
-Output written on 1504693_CMM535_Report.pdf (12 pages, 1277223 bytes).
+c/dvips/lm/lm-rm.enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmbx10.pfb><C:/
+Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmbx12.pfb><C:/Program Files/MiK
+TeX 2.9/fonts/type1/public/lm/lmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
+1/public/lm/lmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmr17.
+pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmri12.pfb><C:/Program F
+iles/MiKTeX 2.9/fonts/type1/public/lm/lmtk10.pfb><C:/Program Files/MiKTeX 2.9/f
+onts/type1/public/lm/lmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public
+/lm/lmtt8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmtti10.pfb>
+Output written on 1504693_CMM535_Report.pdf (18 pages, 1326335 bytes).
 PDF statistics:
- 534 PDF objects out of 1000 (max. 8388607)
- 309 named destinations out of 1000 (max. 500000)
- 140 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 583 PDF objects out of 1000 (max. 8388607)
+ 318 named destinations out of 1000 (max. 500000)
+ 164 words of extra memory for PDF output out of 10000 (max. 10000000)
 

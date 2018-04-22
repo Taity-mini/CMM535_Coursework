@@ -9,6 +9,8 @@ library(rpart.plot)
 library(RColorBrewer)
 library(plyr)
 library(dplyr)
+library(doParallel)
+
 #helper function
 source('helper_functions.r')
 
@@ -53,6 +55,8 @@ ggplot(mushroom,aes(x=StalkSurfaceAboveRing, y=StalkSurfaceBelowRing, color=Edib
 
 ##Preprocess dataset
 
+
+
 #Remove missing values
 table(complete.cases (mushroom))
 
@@ -68,34 +72,71 @@ training <- mushroom[inTrain,]
 testing <- mushroom[-inTrain,]
 
 
-#First set the seed for reproducibility
-set.seed(0)
+
 #Classification Models using caret
 
+#Setup Parallel processing to speed up classification modelling 
 cl <- makeCluster(detectCores(), type='PSOCK')
 registerDoParallel(cl)
 
-train_control<- trainControl(method="cv", number=5)
+#set train control to cross-validation with 5 folds
+train_control<- trainControl(method="cv", number=10,verboseIter=FALSE)
+
+#First set the seed for reproducibility
+set.seed(1)
+
+#train model using kNN
+kNNModel <- train(Edible ~ ., data = training, 
+                  trControl = train_control, 
+                  tuneLength =10,
+                  method = "knn",
+                  metric = 'Accuracy'
+)
+
+#Show the kNN model results
+kNNModel
+
+
+#Predict the accuracy of the kNN Model against the testing set
+predictkNN <- predict(kNNModel,testing)
+confusionMatrix(predictkNN, testing$Edible)
+
+
+
+
+#First set the seed for reproducibility
+set.seed(1)
 
 # train the model using random forest
-RFModel2<- train(Edible~., data=training,
+RFModel<- train(Edible~., data=training,
                 trControl=train_control,
-                method="rf"
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
 )
-
-#train the model using c5.0
-c50Model<- train(Edible~., data=training,
-                 trControl=train_control,
-                 method="C5.0"
-)
-
 RFModel
 
 predictRF <- predict(RFModel,testing)
 confusionMatrix(predictRF, testing$Edible)
 
+
+#First set the seed for reproducibility
+set.seed(1)
+
+#train the model using c5.0
+c50Model<- train(Edible~., data=training,
+                 trControl=train_control,
+                 tuneLength = 10,
+                 method="C5.0",
+                 metric = 'Accuracy'
+)
+
+c50Model
 predictC50 <- predict(c50Model, testing)
 confusionMatrix(predictC50,testing$Edible)
+
+
+
 
 
 # make predictions
@@ -104,6 +145,7 @@ predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
 test<- cbind(testing,predictions)
 # summarize results
 results<- confusionMatrix(test$predictions,test$Edible)
+
 
 results
 
@@ -139,34 +181,39 @@ actual <- clusteredDF$cluster
   
 
 
+# 
+# 
+# for(i in 1:10){
+#   RFModel <- randomForest(
+#           training[,-23],
+#           testing[,-23],
+#           
+#           xtest = testing[,-23],
+#           ytest = testing[,23],
+#           ntree = ntrees,
+#           mtry = 10,
+#           proximity = TRUE
+#   )
+#   
+#   preds <- levels(training[,23])[RFModel$test$predicted]
+#   
+#   auc <- sum(preds == testing[,23]/nrow(testing))*100
+#   df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
+#   
+#   ntrees <- ntrees + 100
+# }
+# 
+# print(RFModel)
 
-
-for(i in 1:10){
-  RFModel <- randomForest(
-          training[,-23],
-          testing[,-23],
-          
-          xtest = testing[,-23],
-          ytest = testing[,23],
-          ntree = ntrees,
-          mtry = 10,
-          proximity = TRUE
-  )
-  
-  preds <- levels(training[,23])[RFModel$test$predicted]
-  
-  auc <- sum(preds == testing[,23]/nrow(testing))*100
-  df <- rbind(df, data.frame(NTrees = ntrees, Accuracy = auc))
-  
-  ntrees <- ntrees + 100
-}
-
-print(RFModel)
 # turn parallel processing off and run sequentially again:
 registerDoSEQ()
 
 
-
+rs <- resamples(list(kNN = kNNModel, 
+                     c50 = c50Model, 
+                     rf = RFModel))
+summary(rs)
+bwplot(rs, layout = c(4, 1))
 
 
 # Clustering dataset
@@ -231,39 +278,39 @@ dfU <- clustData(dfN,ncol(binAdult),rep(2,length(unique(dfN[,ncol(binAdult)]))))
 
 dfU <- transform(mushroom, class=as.numeric(as.character(mushroom)))
 
-clustData <- function (df,ClassIndex, kmeansClasses = rep(0,unique(df[,ClassIndex]))){
-  
-  
-  dfs <- split(df,df[,ClassIndex])
-  
-  clustList <- list()
-  
-  n <- length(dfs)
-  
-  for(i in 1:length(kmeansClasses)){
-    if(kmeansClasses[i] >1 & kmeansClasses[i] < nrow(dfs[i])){
-      
-      clustList[[i]] <- kmean(dfs[[i]][,-ClassIndex], kmeansClasses[i])
-      
-      dfs[[i]]$cluster <- paste0((dfs[i][,ClassIndex]),
-                                 "_", "c", clustList[[i]]$cluster)
-  
-    }
-    else{
-      dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]), 
-                                "_c0")
-    }
-  }
-  
-  
-  allClusteredElements <- ldply (dfs, data.frame)
-  allClusteredElements <- allClusteredElements[,-1]
-  
-  allClusteredElements <- allClusteredElements[,ClassIndex]
-  
-  return (allClusteredElements)
-  
-}
+# clustData <- function (df,ClassIndex, kmeansClasses = rep(0,unique(df[,ClassIndex]))){
+#   
+#   
+#   dfs <- split(df,df[,ClassIndex])
+#   
+#   clustList <- list()
+#   
+#   n <- length(dfs)
+#   
+#   for(i in 1:length(kmeansClasses)){
+#     if(kmeansClasses[i] >1 & kmeansClasses[i] < nrow(dfs[i])){
+#       
+#       clustList[[i]] <- kmean(dfs[[i]][,-ClassIndex], kmeansClasses[i])
+#       
+#       dfs[[i]]$cluster <- paste0((dfs[i][,ClassIndex]),
+#                                  "_", "c", clustList[[i]]$cluster)
+#   
+#     }
+#     else{
+#       dfs[[i]]$cluster = paste0((dfs[[i]][,ClassIndex]), 
+#                                 "_c0")
+#     }
+#   }
+#   
+#   
+#   allClusteredElements <- ldply (dfs, data.frame)
+#   allClusteredElements <- allClusteredElements[,-1]
+#   
+#   allClusteredElements <- allClusteredElements[,ClassIndex]
+#   
+#   return (allClusteredElements)
+#   
+# }
 
 #Clustering Function
 clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex]))) {

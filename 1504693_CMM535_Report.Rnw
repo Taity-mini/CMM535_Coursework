@@ -71,7 +71,8 @@
 \subsection{Dataset Choice}
 The dataset that has been chosen for this part of the coursework is Mushroom. This is available on the UCI repository. The set was chosen because of it's adequate instance size and number of attributes.
 
-.
+\url{http://archive.ics.uci.edu/ml/datasets/Mushroom}
+
 
 
 \subsection{Problem Statement and Data Exploration}
@@ -95,6 +96,8 @@ library(caret)
 library(rpart.plot)
 library(RColorBrewer)
 library(plyr)
+library(dplyr)
+library(doParallel)
 @
 
 <<warning=FALSE,echo=FALSE, comment=FALSE, message=FALSE>>==
@@ -108,6 +111,8 @@ library(caret)
 library(rpart.plot)
 library(RColorBrewer)
 library(plyr)
+library(dplyr)
+library(doParallel)
 @
 
 
@@ -120,7 +125,7 @@ setwd("~/CMM535 Data Science Development/Coursework/CMM535_Coursework")
 setwd("~/CMM535 Data Science Development/Coursework/CMM535_Coursework")
 @
 
-In order to import the dataset, I used a third party helper function, which can be viewed at Figure .
+In order to import the dataset, I used a third party helper function, which can be viewed at (Figure~\ref{figHelper})  .
 The helper function not only set the attributes names but the instances names as well. Since all the data is represented a single character, it converts them into their string equivalent.
 
 
@@ -205,7 +210,7 @@ barplot(table(mushroom$Edible))
 \end {center}
 \end {figure}
 
-Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2}))below.
+Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2})) below.
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
 
@@ -280,20 +285,6 @@ table(complete.cases (mushroom))
 
 As shown above, there is not any missing values in the dataset.
 
-The class (Edible) on the Mushroom dataset is then converted to a factor, this is due to way that certain classification models interact with the class feature of a dataset.
-
-
-<<warning=FALSE,eval=FALSE,comment=TRUE>>==
-#Class Distribution
-mushroom$Edible <- as.factor(mushroom$Edible)
-@
-
-
-<<warning=FALSE,echo=FALSE>>=
-#Class Distribution
-mushroom$Edible <- as.factor(mushroom$Edible)
-@
-
 
 \clearpage
 
@@ -330,12 +321,231 @@ testing <- mushroom[-inTrain,]
 
 \subsection{Build Classifier}
 
+For the initial classifier I decided to go with the kNN Classifer as it has proven to be a good baseline in previous labs and exercises in R.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
 
 
+@
+
+Before the classification begins, parallel processing is enabled to speed up this process.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Setup Parallel processing to speed up classification modelling 
+cl <- makeCluster(detectCores(), type='PSOCK')
+registerDoParallel(cl)
+@
+
+<<warning=FALSE,echo=FALSE>>=
+#Setup Parallel processing to speed up classification modelling 
+cl <- makeCluster(detectCores(), type='PSOCK')
+registerDoParallel(cl)
+@
+
+The train control is set to cross-validation with 5 folds:
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#set train control to cross-validation with 5 folds
+train_control<- trainControl(method="cv", number=5)
+@
+
+<<warning=FALSE,echo=FALSE>>=
+#set train control to cross-validation with 5 folds
+train_control<- trainControl(method="cv", number=5)
+@
+
+% 
+% Next the seed is set to 1, in order to make the module reproducible and the kNN model is set up with the train_control from above and the tunelength of 20.
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#First set the seed for reproducibility
+set.seed(1)
+
+#train model using kNN
+kNNModel <- train(Edible ~ ., data = training,
+                  trControl = train_control,
+                  tuneLength = 20,
+                  method = "knn"
+)
+@
+
+
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
+set.seed(1)
+
+#train model using kNN
+kNNModel <- train(Edible ~ ., data = training,
+                  trControl = train_control,
+                  tuneLength = 20,
+                  method = "knn"
+)
+@
+
+Once the knn Model is complete, it's time to analyse the results, first with a print of the kNNModel as shown below.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Show the kNN model results
+kNNModel
+
+@
+
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Show the kNN model results
+kNNModel
+
+@
+
+
+Next is a confusion matrix is created by predicting the accuracy against the testing subset.
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+
+#Predict the accuracy of the kNN Model against the testing set
+predictkNN <- predict(kNNModel,testing)
+confusionMatrix(predictkNN, testing$Edible)
+@
+
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+
+#Predict the accuracy of the kNN Model against the testing set
+predictkNN <- predict(kNNModel,testing)
+confusionMatrix(predictkNN, testing$Edible)
+@
+
+
+
+
+\clearpage
 
 
 \subsection{Improve Model Performance}
 
+\subsubsection{C5.0 Model}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#First set the seed for reproducibility
+set.seed(1)
+
+#train the model using c5.0
+c50Model<- train(Edible~., data=training,
+                 trControl=train_control,
+                 tuneLength=5, 
+                 method="C5.0"
+)
+@
+
+
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
+set.seed(1)
+c50Model<- train(Edible~., data=training,
+                 trControl=train_control,
+                 tuneLength = 10,
+                 method="C5.0"
+)
+@
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Show the c50Model results
+ c50Model
+@
+
+
+
+
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
+#Show the c50Model results
+c50Model
+@
+
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+predictC50 <- predict(c50Model, testing)
+confusionMatrix(predictC50,testing$Edible)
+@
+
+
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+predictC50 <- predict(c50Model, testing)
+confusionMatrix(predictC50,testing$Edible)
+@
+
+
+
+
+\clearpage
+
+\subsubsection{Random forest Model}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModel<- train(Edible~., data=training,
+                trControl=train_control,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+
+@
+
+<<warning=FALSE,echo=FALSE, cache=TRUE>>=
+
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModel<- train(Edible~., data=training,
+                trControl=train_control,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+@
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+RFModel
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+RFModel
+@
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+predictRF <- predict(RFModel,testing)
+confusionMatrix(predictRF, testing$Edible)
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+predictRF <- predict(RFModel,testing)
+confusionMatrix(predictRF, testing$Edible)
+@
+
+
+
+\clearpage
+
+
+\subsubsection{Comparison of all Models}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+predictRF <- predict(RFModel,testing)
+confusionMatrix(predictRF, testing$Edible)
+@
 
 
 \clearpage
@@ -347,21 +557,50 @@ testing <- mushroom[-inTrain,]
 
 \subsection{Clustering Dataset}
 
+\subsubsection{Pre-processing}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+normalizeData <- function (x ) {
+return ( (x-min(x) ) / ( max(x)- min(x) ))
+}
+@
+
+
 <<warning=FALSE,echo=FALSE>>=
 normalizeData <- function (x ) {
 return ( (x-min(x) ) / ( max(x)- min(x) ))
 }
+@
 
 
 
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Copy the dataset before pre-processing 
 dfNew <- mushroom
 dfNew$VeilType <- NULL
 
+#Convert the dataframe to numeric values
 dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
 
-
+##Then use the normalise function from above
 dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
 @
+
+
+<<warning=FALSE,echo=FALSE>>=
+
+
+#Copy the dataset before pre-processing 
+dfNew <- mushroom
+dfNew$VeilType <- NULL
+
+#Convert the dataframe to numeric values
+dfNew[,2:22] = lapply(dfNew[,2:22], as.numeric)
+
+##Then use the normalise function from above
+dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
+@
+
 
 
 \subsection{Adapting your Model}
@@ -383,6 +622,7 @@ dfN <- as.data.frame(lapply(dfNew[,-1], normalizeData))
 
 I used a helper function to import the dataset, it helps with assigning the correct column and row names to the dataset. It also removes any missing values from the dateset.
 
+\url{https://github.com/stoltzmaniac/Mushroom-Classification/blob/master/helper_functions.R}
 
 \lstset{ 
   language=R,                     % the language of the code
@@ -698,18 +938,6 @@ clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex
 }
 \end{lstlisting}
 \label{figCluster}
-
-% Clear the page and starte a new page for references 
-
-\clearpage
-% The title for the reference section is called References 
-
-\section{References}\label{pubs}
-
-\printbibliography[heading =none]
-
-
-\clearpage
 
 
 \end{document}
