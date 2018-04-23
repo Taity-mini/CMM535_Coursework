@@ -128,10 +128,10 @@ The dataset that has been chosen for this part of the coursework is Mushroom. Th
 
 The main purpose of the Mushroom dataset is to identify which characteristics (attributes) determine if a particular mushroom species is editable or poisonous.
 
-Therefore the aim of this assignment is to build a predictive model to predict if a certain type of Mushroom is ediable or not.
+Therefore the aim of this assignment is to build a predictive model to predict if a certain type of Mushroom is edible or not.
 
 
-To start off the data explortation I will first import the required packages.
+To start off the data exploration I will first import the required packages.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -314,11 +314,10 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 \end{kframe}
 \end{knitrout}
 
-
-
+As shown in the above summary and graphs, the dataset is not unbalanced with the Edible class that has 4208 instances(51.7971 percent) and the Poisonous class that has 3916 instances (48.20 percent) in the dataset.
 \clearpage
 
-Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2})) below.
+Next is to analyse if there is a cor-relocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot (Figure~\ref{fig2}) below.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -334,6 +333,7 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 
 
 
+
 \begin{figure}[H]
 \begin{center}
 \begin{knitrout}
@@ -346,7 +346,11 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 \end {center}
 \end {figure}
 
+As the plot above shows, there is a correlation between the Capshape and Capsurface of a Mushroom and whether it's Edible or not. For instance if the Capshape is either Convex or flat there is high chance it will be Poisonous. On the side if the Capshape is Surken and the CapSurface Fibrous then it will be a Edible Mushroom.
+
 \clearpage
+
+The last data exploration task to do is to analyse if there is a cor-relocation between the StalkSurfaceAboveRing and StalkSurfaceBelowRing of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot (Figure~\ref{fig3}) below.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -371,7 +375,8 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 \end {center}
 \end {figure}
 
-
+There is a bit more of a mix between the classes in this graph. The main cluster that sticks it out is if both the StalkSurfaceBelowRing and StalkSurfaceAboveRing is Silky then the mushroom is going to be Poisionous, the vast majority of the time. On the other hand if the 
+StalkSurfaceAboveRing is Smooth and the StalkSurfaceBelowRing is Scaly then the mushroom will be Edible.
 
 \clearpage
 
@@ -379,7 +384,7 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 
 Before the Mushroom dataset can be processed by a classification model(s), some pre-processing is required.
 
-While the helper function should take out all missing values, lets valdiate this before continuing.
+While the helper function should take out all missing values, lets validate this before continuing.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -408,19 +413,19 @@ As shown above, there is not any missing values in the dataset.
 
 
 
-\section {Modeling and Classifcation}
+\section {Modeling and Classification}
 
 
 
 \subsection {Divide into training and testing subset}
 
 When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with  60 percent
-training and 40 percent testing split as a starting point/baseline. This is to prevent overfitting from occurring.
+training and 40 percent testing split as a starting point/baseline. This is to prevent over fitting from occurring.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{#Divide the dataset into 60% training and 40% testing, to prevent overfitting from ocurring}
+\hlcom{#Divide the dataset into 60% training and 40% testing, to prevent overfitting from occurring}
 \hlstd{inTrain} \hlkwb{<-} \hlkwd{createDataPartition}\hlstd{(}\hlkwc{y}\hlstd{=mushroom}\hlopt{$}\hlstd{Edible,} \hlkwc{p}\hlstd{=}\hlnum{0.6}\hlstd{,} \hlkwc{list}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 
 \hlcom{#Assign indexes to split the Mushroom dataset into training and testing}
@@ -436,7 +441,7 @@ training and 40 percent testing split as a starting point/baseline. This is to p
 
 \subsection{Build Classifier}
 
-For the initial classifier I decided to go with the kNN Classifer as it has proven to be a good baseline in previous labs and exercises in R.
+For the initial classifier I decided to go with the kNN Classifier as it has proven to be a good baseline in previous labs and exercises in R.
 
 
 Before the classification begins, parallel processing is enabled to speed up this process.
@@ -453,7 +458,7 @@ Before the classification begins, parallel processing is enabled to speed up thi
 
 
 
-The train control is set to cross-validation with 5 folds:
+The train control is set to cross-validation with 10 folds:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -465,8 +470,8 @@ The train control is set to cross-validation with 5 folds:
 
 
 
-% 
-% Next the seed is set to 1, in order to make the module reproducible and the kNN model is set up with the train_control from above and the tunelength of 20.
+
+Next the seed is set to 1, in order to make the module reproducible and the kNN model is set up with the train_control from above and the tune length of 10.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -487,6 +492,7 @@ The train control is set to cross-validation with 5 folds:
 
 
 
+\clearpage
 Once the knn Model is complete, it's time to analyse the results, first with a print of the kNNModel as shown below.
 
 \begin{knitrout}
@@ -497,7 +503,7 @@ Once the knn Model is complete, it's time to analyse the results, first with a p
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-51.7971 percent, 
+
 
 
 \begin{knitrout}
@@ -532,8 +538,12 @@ Once the knn Model is complete, it's time to analyse the results, first with a p
 \end{kframe}
 \end{knitrout}
 
+As the print out of the kNNModel shows, the accuracy is very high (99.38 percent) and the k value selected for the model is 5.
 
-Next is a confusion matrix is created by predicting the accuracy against the testing subset.
+
+\clearpage
+
+Next is a confusion matrix is created by predicting the accuracy against the testing (40 percent of the total dataset) subset.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -580,6 +590,8 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+When the kNNModel is predicted against the testing subset, it returns with 100 Percent Accuracy. As 1683 of the instances were correctly classified as 'Edible' and 1566 of instances were correctly classed as 'Poisonous'. The kappa value was also value of one. 
+
 
 
 
@@ -588,8 +600,11 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 \subsection{Improve Model Performance}
 
+As discussed in the previous section, the kNNModel produced 100 percent Accuracy so there isn't much too improve on that particular model. Therefore I've decided to test the Mushroom dataset against two different classifiers: c5.0 and Random forest. The train control setting remains the same from kNN, for a fair comparison.
+
 \subsubsection{C5.0 Model}
 
+First off the seed is set for reproducibility and the tune length is to 5 (takes less time and still produces accurate results).
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -609,7 +624,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
-
+Once the C5.0 model is completed, it's results are outlined below.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -685,17 +700,21 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+As shown in the results above the accuracy of the c5.0 model is 100 percent like the kNN Model but on the first trail run.
 
+\clearpage
+
+Next is a confusion matrix is created by predicting the accuracy against the testing (40 percent of the total dataset) subset.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{#Predict the accuracy of the c5.0 Model against the testing set}
 \hlstd{predictC50} \hlkwb{<-} \hlkwd{predict}\hlstd{(c50Model, testing)}
 \hlkwd{confusionMatrix}\hlstd{(predictC50,testing}\hlopt{$}\hlstd{Edible)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
 
 
 
@@ -732,12 +751,15 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
-
+When the C5.0 Model is predicted against the testing subset, it returns with 100 Percent Accuracy. As 1683 of the instances were correctly classified as 'Edible' and 1566 of instances were correctly classed as 'Poisonous'. The kappa value was also value of one. 
 
 
 \clearpage
 
 \subsubsection{Random forest Model}
+
+First off the seed is set for reproducibility and the tune length is to 10.
+As in the previous models the train control remains the same.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -759,9 +781,11 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
+Once the Random forest model is completed, its results are outlined below.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{#Show the results from the random forest model}
 \hlstd{RFModel}
 \end{alltt}
 \end{kframe}
@@ -800,9 +824,15 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+As shown in the results above the accuracy of the c5.0 model is 100 percent like the kNN Model and c5.0 model but the mtry value is to 22. 
+
+\clearpage
+Next is a confusion matrix is created by predicting the accuracy against the testing (40 percent of the total
+dataset) subset.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
+\hlcom{#Predict the accuracy of the rf Model against the testing set}
 \hlstd{predictRF} \hlkwb{<-} \hlkwd{predict}\hlstd{(RFModel,testing)}
 \hlkwd{confusionMatrix}\hlstd{(predictRF, testing}\hlopt{$}\hlstd{Edible)}
 \end{alltt}
@@ -843,12 +873,44 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+When the Random forest model is predicted against the testing subset, it returns with 100 Percent Accuracy. As 1683 of the instances were correctly classified as 'Edible' and 1566 of instances were correctly classed as 'Poisonous'. The kappa value was also value of one. 
 
+\clearpage
+
+In addition to the confusion matrix, a Variable importance plot is produced from the Random forest model. As shown in (Figure~\ref{fig4})
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Show which variables are most important from the RF Model}
+\hlkwd{varImpPlot}\hlstd{(RFModel}\hlopt{$}\hlstd{finalModel,}\hlkwc{main} \hlstd{=} \hlstr{'Variable Importance'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{figure}[H]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=1\linewidth]{figure/unnamed-chunk-48-1} 
+
+\end{knitrout}
+\caption {Variable Importance based on the RFModel Results}
+\label{fig4}
+\end {center}
+\end {figure}
+
+The most important variable based on the plot above, is OderNone with MeanDecreaseGini value of 350+. Followed by the OderFoul variable  with around MeanDecreaseGini value of 250.
+
+This means that the smell of a Mushroom is the strongest indicator of whether it is classified  as Edible or Poisonous.
 
 \clearpage
 
 
 \subsubsection{Comparison of all Models}
+
+Finally the three classification models are compared against each other.
+To do this they are re sampled as a list and then plotted using a bwplot.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -857,12 +919,10 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
                      \hlkwc{c50} \hlstd{= c50Model,}
                      \hlkwc{rf} \hlstd{= RFModel))}
 \hlkwd{summary}\hlstd{(rs)}
-\hlkwd{bwplot}\hlstd{(rs,} \hlkwc{layout} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,} \hlnum{1}\hlstd{))}
+\hlkwd{bwplot}\hlstd{(rs)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
-
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
@@ -886,9 +946,27 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## rf  1.0000000 1.0000000      1 1.0000000       1    1    0
 \end{verbatim}
 \end{kframe}
-\includegraphics[width=\maxwidth]{figure/unnamed-chunk-48-1} 
+\end{knitrout}
+
+The summary of all three models is that the c50 and random forest models are identical in accuracy and kappa values. While the kNN model is slightly lower at 99.794 percent for it's minimal accuracy value.
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=0.75\linewidth]{figure/unnamed-chunk-51-1} 
 
 \end{knitrout}
+\caption {Comparison of kNN, C5.0 and Random Forest Models}
+\label{fig5}
+\end {center}
+\end {figure}
+
+
+The box plot illustrates that the performance between all three models is very similar. 
+While the C5.0 and random forest models, performed the same in terms of accuracy and kappa values, I decided to go with the Random forest model to use in the Clustering exercise.
+
 
 
 \clearpage
@@ -901,6 +979,10 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \subsection{Clustering Dataset}
 
 \subsubsection{Pre-processing}
+
+Before the dataset can be turned into clusters, there is some pre-processing required.
+First a normalize data function is setup.
+
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -920,6 +1002,10 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 % Clustering function to run (displayed as a listing at the end of the doc)
 
 
+
+Next the mushroom (clean) dataset is copied to a data frame variable dfNew. The vieltype attribute is also removed, as this caused errors that prevented the clustering function from running.
+
+The instances are turned into numerical values and then normalized.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -943,6 +1029,8 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 \subsubsection{Clustering using clustData function}
 
+
+The edible class is then added back to the data frame dfN after normlization process is complete.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -953,7 +1041,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
+The dataframe is now numerical and contains no missing values.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -987,6 +1075,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+The provided clustering function see Figure~\ref{figCluster}), is then run with the clustering options set to 2 as there is only 2 classes.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1035,7 +1124,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ##    RingNumber RingType SporePrintColor Population   Habitat   cluster
 ## 1         0.5        1           0.125        0.4 0.0000000 Edible_c2
 ## 2         0.5        1           0.125        0.4 0.3333333 Edible_c2
-## 3         0.5        0           0.125        0.0 0.0000000 Edible_c1
+## 3         0.5        0           0.125        0.0 0.0000000 Edible_c2
 ## 4         0.5        1           0.000        0.4 0.0000000 Edible_c2
 ## 5         0.5        1           0.000        0.4 0.3333333 Edible_c2
 ## 6         0.5        1           0.125        0.6 0.3333333 Edible_c2
@@ -1052,6 +1141,9 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 \subsubsection{Refitting Random Forest to Clustering}
+
+The clusteredDF is now going to be run through the same Random forest model as in section 2.3.2. 
+With the the 60 percent training and 40 percent training split. 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1076,7 +1168,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
-
+First off the seed is set for reproducibility and the tune length is set to 10.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1097,7 +1189,8 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
-
+\clearpage
+Once the Random forest clustering model is completed, its results are outlined below.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
@@ -1109,27 +1202,32 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 4387, 4389, 4388, 4388, 4389, 4388, ... 
+## Summary of sample sizes: 4388, 4388, 4387, 4389, 4389, 4388, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  Accuracy  Kappa
-##    2    1         1    
-##    4    1         1    
-##    6    1         1    
-##    8    1         1    
-##   10    1         1    
-##   12    1         1    
-##   14    1         1    
-##   16    1         1    
-##   18    1         1    
-##   21    1         1    
+##   mtry  Accuracy   Kappa    
+##    2    0.9993852  0.9991760
+##    4    0.9993852  0.9991760
+##    6    0.9993852  0.9991760
+##    8    0.9993852  0.9991760
+##   10    0.9993852  0.9991760
+##   12    0.9993852  0.9991760
+##   14    0.9993852  0.9991760
+##   16    0.9993852  0.9991760
+##   18    0.9993852  0.9991760
+##   21    0.9995902  0.9994507
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
-## The final value used for the model was mtry = 2.
+## The final value used for the model was mtry = 21.
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
+The accuracy of Random forest model has decreased slightly when using the clustered dataset with the highest value of 0.9995902 percent accuracy and 0.9994507 kappa.
 
+
+\clearpage
+Next is a confusion matrix is created by predicting the accuracy against the testing (40 percent of the total
+dataset) subset
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -1140,7 +1238,6 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
-
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
@@ -1148,32 +1245,32 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ##               Reference
 ## Prediction     Edible_c1 Edible_c2 Poisonous_c1 Poisonous_c2
-##   Edible_c1          537         0            0            0
-##   Edible_c2            0      1145            0            0
+##   Edible_c1          732         1            0            0
+##   Edible_c2            0       949            0            0
 ##   Poisonous_c1         0         0          862            0
 ##   Poisonous_c2         0         0            0          704
 ## 
 ## Overall Statistics
 ##                                      
-##                Accuracy : 1          
-##                  95% CI : (0.9989, 1)
-##     No Information Rate : 0.3525     
+##                Accuracy : 0.9997     
+##                  95% CI : (0.9983, 1)
+##     No Information Rate : 0.2925     
 ##     P-Value [Acc > NIR] : < 2.2e-16  
 ##                                      
-##                   Kappa : 1          
+##                   Kappa : 0.9996     
 ##  Mcnemar's Test P-Value : NA         
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: Edible_c1 Class: Edible_c2 Class: Poisonous_c1
-## Sensitivity                    1.0000           1.0000              1.0000
-## Specificity                    1.0000           1.0000              1.0000
-## Pos Pred Value                 1.0000           1.0000              1.0000
-## Neg Pred Value                 1.0000           1.0000              1.0000
-## Prevalence                     0.1653           0.3525              0.2654
-## Detection Rate                 0.1653           0.3525              0.2654
-## Detection Prevalence           0.1653           0.3525              0.2654
-## Balanced Accuracy              1.0000           1.0000              1.0000
+## Sensitivity                    1.0000           0.9989              1.0000
+## Specificity                    0.9996           1.0000              1.0000
+## Pos Pred Value                 0.9986           1.0000              1.0000
+## Neg Pred Value                 1.0000           0.9996              1.0000
+## Prevalence                     0.2254           0.2925              0.2654
+## Detection Rate                 0.2254           0.2922              0.2654
+## Detection Prevalence           0.2257           0.2922              0.2654
+## Balanced Accuracy              0.9998           0.9995              1.0000
 ##                      Class: Poisonous_c2
 ## Sensitivity                       1.0000
 ## Specificity                       1.0000
@@ -1187,9 +1284,12 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+The confusion matrix shows an overall accuracy of  0.9997 percent and there is one incorrectly classified cluster: Edible_c1 classified as Edible_c2.
 
 \clearpage
 \subsubsection{Results}
+
+To display the results, the actual and predicted results are split into two variables.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1209,12 +1309,13 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
-##  chr [1:3248] "Edible_c1" "Edible_c2" "Edible_c1" "Edible_c2" ...
-##  Factor w/ 4 levels "Edible_c1","Edible_c2",..: 1 2 1 2 2 2 2 2 2 2 ...
+##  chr [1:3248] "Edible_c2" "Edible_c2" "Edible_c2" "Edible_c2" ...
+##  Factor w/ 4 levels "Edible_c1","Edible_c2",..: 2 2 2 2 2 2 2 2 2 2 ...
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
 
+The actual and predicted values are then combined to a single dataframe.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1229,9 +1330,28 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \end{kframe}
 \end{knitrout}
 
+The instance values of each of the results are then converted to characters.
+
+
+The results placeholder has be initialize prior to the for loop been run.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#initlise results variable outside for-loop to null}
+\hlstd{results} \hlkwb{<-} \hlkwa{NULL}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 
+
+
+The for loop below, for the total number of rows in the cols dataframe. It then splits the actual and predicted results for that row into variables.
+
+The supplied substr code then compares the two values and removes the last three characters.
+If the two results are the same then it will store 'Yes' in the results dataframe else 'No'.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -1260,19 +1380,34 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'results' not found}}\end{kframe}
-\end{knitrout}
+
+
 
 \clearpage
+
+Once the for-loop is complete, all the results are binded into one dataframe. The results this dataframe are shown in the following three tables.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Bind the actual, predicted and correct results together.}
+\hlstd{finalResults} \hlkwb{=} \hlkwd{cbind}\hlstd{(cols,} \hlstr{"Correct"} \hlstd{=results)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
 
 % latex table generated in R 3.4.2 by xtable 1.8-2 package
 % Sun Apr 22 15:14:57 2018
 \begin{table}[ht]
 \centering
+\caption{Confusion Matrix of RF Cluster Model - 100 percent Accuracy}
 \begin{tabular}{rrrrr}
   \hline
  & Edible\_c1 & Edible\_c2 & Poisonous\_c1 & Poisonous\_c2 \\ 
@@ -1283,14 +1418,16 @@ Edible\_c1 & 1145 &   0 &   0 &   0 \\
   Poisonous\_c2 &   0 &   0 &   0 & 862 \\ 
    \hline
 \end{tabular}
+\label{tab1}
 \end{table}
 
 
 
 
-% Final Results Table (top 10)
+% Final Results Table (Top 10)
 \begin{table}[ht]
 \centering
+\caption{Actual, Predicted and Correct Results Table (Top 10)}
 \begin{tabular}{rlll}
   \hline
  & Actual & Predicted & Correct \\ 
@@ -1307,12 +1444,14 @@ Edible\_c1 & 1145 &   0 &   0 &   0 \\
   10 & Edible\_c1 & Edible\_c1 & Yes \\ 
    \hline
 \end{tabular}
+\label{tab2}
 \end{table}
 
 
 % Final Results Table (last 10)
 \begin{table}[ht]
 \centering
+\caption{Actual, Predicted and Correct Results Table (Bottom 10)}
 \begin{tabular}{rlll}
   \hline
  & Actual & Predicted & Correct \\ 
@@ -1329,7 +1468,14 @@ Edible\_c1 & 1145 &   0 &   0 &   0 \\
   3248 & Poisonous\_c1 & Poisonous\_c1 & Yes \\ 
    \hline
 \end{tabular}
+\label{tab3}
 \end{table}
+
+As the first table displays the clustering random forest model is 100 percent accurate. with all the clusters correctly identified.
+
+The last two tables show the top 10 and last 10 rows of the finalresults dataframe.
+
+Overall this Random forest model was a complete success in correctly classifying the clusters for each of the classes.
 
 
 
@@ -1622,6 +1768,7 @@ fetchAndCleanData = function(){
 
 \clearpage
 
+\label{figCluster}
 \begin{figure}[H]
 \caption {clustData function for clustering Mushroom dataset}
 \end {figure}

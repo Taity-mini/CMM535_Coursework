@@ -65,7 +65,7 @@ table(complete.cases (mushroom))
 
 
 #Divide the dataset into 60% training and 40% testing.
-inTrain <- createDataPartition(y=mushroom$Edible, p=0.6, list=FALSE)
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.4, list=FALSE)
 
 #Assign indexes to split the Mushroom dataset into training and testing
 training <- mushroom[inTrain,]
@@ -140,15 +140,15 @@ confusionMatrix(predictRF, testing$Edible)
 varImpPlot(RFModel$finalModel,main = 'Variable Importance')
 
 
-# make predictions
-predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
-# append predictions (just for manual analysis)
-test<- cbind(testing,predictions)
-# summarize results
-results<- confusionMatrix(test$predictions,test$Edible)
-
-
-results
+# # make predictions
+# predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
+# # append predictions (just for manual analysis)
+# test<- cbind(testing,predictions)
+# # summarize results
+# results<- confusionMatrix(test$predictions,test$Edible)
+# 
+# 
+# results
 
 
 
@@ -171,32 +171,6 @@ bwplot(rs, layout = c(4, 1))
 
 # Clustering dataset
 
-
-# #Copy dataset
-# noClass <-mushroom
-# #Remove class as it is not being transformed to binary
-# noClass$Edible <- NULL
-# 
-# binaryVars <- caret::dummyVars(~ ., data = noClass)
-# newMushroom <- predict(binaryVars, newdata = noClass)
-# 
-# #add class to binarised dataset
-# binMushroom <-cbind(newMushroom, mushroom[1])
-# str(binMushroom)
-# 
-# summary(binMushroom)
-
-
-# df <- mushroom
-# 
-# dfN <- as.data.frame(lapply(newMushroom[,], normalizeData) )
-# # add the label
-# dfN$Species <- df$Species
-# clusteredDF <- clustData(dfN,ncol(df), c(2,2,2))
-# 
-# clusteredDF <- clustData(mushroom ,ncol(mushroom)-1, c(2,2,2))
-# 
-# str(df)
 
 
 
@@ -226,7 +200,7 @@ clusteredDF <- clustData(dfN,ncol(dfNew), c(2,2))
 
 summary(clusteredDF$cluster)
 
-autoplot(clusteredDF)
+
 
 head(clusteredDF,20)
 table(clusteredDF$cluster)
@@ -272,7 +246,6 @@ confusionMatrix(predictRFCluster, testingCluster$cluster)
 
 #Split the actual results
 actual <- testingCluster$cluster
-
 str(actual)
 
 #Split the predicted Results
@@ -283,12 +256,13 @@ str(pred)
 #Combine the actual and predicted results into a dataframe.
 cols = data.frame("Actual" = actual, "Predicted" = pred)
 
-
 #Convert the both the actual and predict results to characters
 cols$Actual <- as.character(cols$Actual)
 cols$Predicted <- as.character(cols$Predicted)
 
-str(cols)
+#initlise results variable outside for-loop to null
+results <- NULL
+
 
 #Loop for all the rows in cols dataframe
 for(row in 1:nrow(cols)){
