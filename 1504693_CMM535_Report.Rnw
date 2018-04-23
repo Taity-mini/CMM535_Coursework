@@ -203,6 +203,7 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 #Class Distribution
 barplot(table(mushroom$Edible))
 @
+
 \begin{figure}[H]
 \begin{center}
 <<warning=FALSE,echo=FALSE,fig.height=4.5,out.width=".76\\linewidth">>=
@@ -212,6 +213,20 @@ barplot(table(mushroom$Edible))
 \label{fig1}
 \end {center}
 \end {figure}
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Class Distribution
+summary(mushroom$Edible)
+@
+
+
+<<warning=FALSE,echo=FALSE>>==
+summary(mushroom$Edible)
+@
+
+
+
+\clearpage
 
 Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2})) below.
 
@@ -225,6 +240,8 @@ ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) +
                                                                                   
 
 @
+
+
 
 \begin{figure}[H]
 \begin{center}
@@ -240,6 +257,8 @@ ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) +
 \label{fig2}
 \end {center}
 \end {figure}
+
+\clearpage
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
 
@@ -299,12 +318,12 @@ As shown above, there is not any missing values in the dataset.
 
 \subsection {Divide into training and testing subset}
 
-When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with the conventional 70 percent
-training and 30 percent testing split as a starting point/baseline.
+When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with  60 percent
+training and 40 percent testing split as a starting point/baseline. This is to prevent overfitting from occurring.
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
-#Divide the datset into 70% training and 30% testing.
-inTrain <- createDataPartition(y=mushroom$Edible, p=0.7, list=FALSE)
+#Divide the dataset into 60% training and 40% testing, to prevent overfitting from ocurring
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.6, list=FALSE)
 
 #Assign indexes to split the Mushroom dataset into training and testing
 training <- mushroom[inTrain,]
@@ -312,8 +331,8 @@ testing <- mushroom[-inTrain,]
 @
 
 <<warning=FALSE,echo=FALSE>>=
-#Divide the datset into 70% training and 30% testing.
-inTrain <- createDataPartition(y=mushroom$Edible, p=0.7, list=FALSE)
+#Divide the dataset into 60% training and 40% testing.
+inTrain <- createDataPartition(y=mushroom$Edible, p=0.6, list=FALSE)
 
 #Assign indexes to split the Mushroom dataset into training and testing
 training <- mushroom[inTrain,]
@@ -326,10 +345,6 @@ testing <- mushroom[-inTrain,]
 
 For the initial classifier I decided to go with the kNN Classifer as it has proven to be a good baseline in previous labs and exercises in R.
 
-<<warning=FALSE,eval=FALSE,comment=TRUE>>==
-
-
-@
 
 Before the classification begins, parallel processing is enabled to speed up this process.
 
@@ -347,13 +362,13 @@ registerDoParallel(cl)
 
 The train control is set to cross-validation with 5 folds:
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
-#set train control to cross-validation with 5 folds
-train_control<- trainControl(method="cv", number=5)
+#set train control to cross-validation with 10 folds
+train_control<- trainControl(method="cv", number=10,verboseIter=FALSE)
 @
 
 <<warning=FALSE,echo=FALSE>>=
-#set train control to cross-validation with 5 folds
-train_control<- trainControl(method="cv", number=5)
+#set train control to cross-validation with 10 folds
+train_control<- trainControl(method="cv", number=10,verboseIter=FALSE)
 @
 
 % 
@@ -363,22 +378,25 @@ train_control<- trainControl(method="cv", number=5)
 set.seed(1)
 
 #train model using kNN
-kNNModel <- train(Edible ~ ., data = training,
-                  trControl = train_control,
-                  tuneLength = 20,
-                  method = "knn"
+kNNModel <- train(Edible ~ ., data = training, 
+                  trControl = train_control, 
+                  tuneLength =10,
+                  method = "knn",
+                  metric = 'Accuracy'
 )
 @
 
 
 <<warning=FALSE,echo=FALSE, cache=TRUE>>=
+#First set the seed for reproducibility
 set.seed(1)
 
 #train model using kNN
-kNNModel <- train(Edible ~ ., data = training,
-                  trControl = train_control,
-                  tuneLength = 20,
-                  method = "knn"
+kNNModel <- train(Edible ~ ., data = training, 
+                  trControl = train_control, 
+                  tuneLength =10,
+                  method = "knn",
+                  metric = 'Accuracy'
 )
 @
 
@@ -387,9 +405,8 @@ Once the knn Model is complete, it's time to analyse the results, first with a p
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
 #Show the kNN model results
 kNNModel
-
 @
-
+51.7971 percent, 
 
 
 <<warning=FALSE,echo=FALSE,cache=TRUE>>=
@@ -542,12 +559,20 @@ confusionMatrix(predictRF, testing$Edible)
 \subsubsection{Comparison of all Models}
 
 <<warning=FALSE,eval=FALSE,comment=TRUE>>==
+rs <- resamples(list(kNN = kNNModel, 
+                     c50 = c50Model, 
+                     rf = RFModel))
+summary(rs)
+bwplot(rs, layout = c(4, 1))
 @
 
 
 <<warning=FALSE,echo=FALSE,cache=TRUE>>=
-predictRF <- predict(RFModel,testing)
-confusionMatrix(predictRF, testing$Edible)
+rs <- resamples(list(kNN = kNNModel, 
+                     c50 = c50Model, 
+                     rf = RFModel))
+summary(rs)
+bwplot(rs, layout = c(4, 1))
 @
 
 
@@ -761,6 +786,93 @@ confusionMatrix(predictRFCluster, testingCluster$cluster)
 \clearpage
 \subsubsection{Results}
 
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Split the actual results
+actual <- testingCluster$cluster
+str(actual)
+
+#Split the predicted Results
+pred <- predictRFCluster
+str(pred)
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Split the actual results
+actual <- testingCluster$cluster
+str(actual)
+
+#Split the predicted Results
+pred <- predictRFCluster
+str(pred)
+@
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Combine the actual and predicted results into a dataframe.
+cols = data.frame("Actual" = actual, "Predicted" = pred)
+
+#Convert the both the actual and predict results to characters
+cols$Actual <- as.character(cols$Actual)
+cols$Predicted <- as.character(cols$Predicted)
+@
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Combine the actual and predicted results into a dataframe.
+cols = data.frame("Actual" = actual, "Predicted" = pred)
+
+#Convert the both the actual and predict results to characters
+cols$Actual <- as.character(cols$Actual)
+cols$Predicted <- as.character(cols$Predicted)
+@
+
+
+<<warning=FALSE,eval=FALSE,comment=TRUE>>==
+#Loop for all the rows in cols dataframe
+for(row in 1:nrow(cols)){
+  
+  #split actual/pred again within for loop
+  actualRow <- cols$Actual[row]
+  predRow <- cols$Predicted[row]
+  
+  #Remove the last three characters in the actual/predicted results 
+  # then check if they are the same
+  results[row] <- substr(actualRow, 0,nchar(actualRow)-3)== substr(predRow,0, nchar(predRow)-3)
+  
+  #If results are the same(TRUE) then set 'Yes' otherwise then 'No'
+  if(results[row] == TRUE){
+    results[row] <- 'Yes'
+  } else{
+    results[row] <- 'No'
+  }
+}
+@
+
+
+
+<<warning=FALSE,echo=FALSE,cache=TRUE>>=
+#Loop for all the rows in cols dataframe
+for(row in 1:nrow(cols)){
+  
+  #split actual/pred again within for loop
+  actualRow <- cols$Actual[row]
+  predRow <- cols$Predicted[row]
+  
+  #Remove the last three characters in the actual/predicted results 
+  # then check if they are the same
+  results[row] <- substr(actualRow, 0,nchar(actualRow)-3)== substr(predRow,0, nchar(predRow)-3)
+  
+  #If results are the same(TRUE) then set 'Yes' otherwise then 'No'
+  if(results[row] == TRUE){
+    results[row] <- 'Yes'
+  } else{
+    results[row] <- 'No'
+  }
+}
+@
+
+\clearpage
 
 % latex table generated in R 3.4.2 by xtable 1.8-2 package
 % Sun Apr 22 15:14:57 2018
@@ -859,7 +971,7 @@ I used a helper function to import the dataset, it helps with assigning the corr
 } 
 
 
-
+\label{figHelper}
 \begin{figure}[H]
 \caption {fetchAndCleanData Function for Mushroom dataset}
 \end {figure}
@@ -1110,7 +1222,7 @@ fetchAndCleanData = function(){
   return(shrooms)
 }
 \end{lstlisting}
-\label{figHelper}
+
 
 
 \clearpage
@@ -1150,7 +1262,7 @@ clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex
   return(allClusteredElements)
 }
 \end{lstlisting}
-\label{figCluster}
+
 
 
 \end{document}

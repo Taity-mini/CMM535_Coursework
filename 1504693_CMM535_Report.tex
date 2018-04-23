@@ -282,6 +282,7 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 \end{alltt}
 \end{kframe}
 \end{knitrout}
+
 \begin{figure}[H]
 \begin{center}
 \begin{knitrout}
@@ -293,6 +294,29 @@ Now that some basic data exploration is covered, next to inspect the dataset a b
 \label{fig1}
 \end {center}
 \end {figure}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Class Distribution}
+\hlkwd{summary}\hlstd{(mushroom}\hlopt{$}\hlstd{Edible)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##    Edible Poisonous 
+##      4208      3916
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+
+\clearpage
 
 Next is to analyse if there is a correlocation between the CapShape and CapSurface of a mushroom and whether it is Edible or Poisonous. Which is shown in the plot ((Figure~\ref{fig2})) below.
 
@@ -308,17 +332,21 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 \end{kframe}
 \end{knitrout}
 
+
+
 \begin{figure}[H]
 \begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-16-1} 
+\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-18-1} 
 
 \end{knitrout}
 \caption {Comparisons of CapShape and CapSurface with Edible or Poisonous in Mushroom Dataset}
 \label{fig2}
 \end {center}
 \end {figure}
+
+\clearpage
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -335,7 +363,7 @@ Next is to analyse if there is a correlocation between the CapShape and CapSurfa
 \begin{center}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-18-1} 
+\includegraphics[width=.76\linewidth]{figure/unnamed-chunk-20-1} 
 
 \end{knitrout}
 \caption {Comparisons of StalkSurfaceAboveRing and StalkSurfaceBelowRing with Edible or Poisionous}
@@ -386,14 +414,14 @@ As shown above, there is not any missing values in the dataset.
 
 \subsection {Divide into training and testing subset}
 
-When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with the conventional 70 percent
-training and 30 percent testing split as a starting point/baseline.
+When it came to dividing the mushroom dataset into training and testing subsets, I decided to go with  60 percent
+training and 40 percent testing split as a starting point/baseline. This is to prevent overfitting from occurring.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{#Divide the datset into 70% training and 30% testing.}
-\hlstd{inTrain} \hlkwb{<-} \hlkwd{createDataPartition}\hlstd{(}\hlkwc{y}\hlstd{=mushroom}\hlopt{$}\hlstd{Edible,} \hlkwc{p}\hlstd{=}\hlnum{0.7}\hlstd{,} \hlkwc{list}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlcom{#Divide the dataset into 60% training and 40% testing, to prevent overfitting from ocurring}
+\hlstd{inTrain} \hlkwb{<-} \hlkwd{createDataPartition}\hlstd{(}\hlkwc{y}\hlstd{=mushroom}\hlopt{$}\hlstd{Edible,} \hlkwc{p}\hlstd{=}\hlnum{0.6}\hlstd{,} \hlkwc{list}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 
 \hlcom{#Assign indexes to split the Mushroom dataset into training and testing}
 \hlstd{training} \hlkwb{<-} \hlstd{mushroom[inTrain,]}
@@ -409,7 +437,6 @@ training and 30 percent testing split as a starting point/baseline.
 \subsection{Build Classifier}
 
 For the initial classifier I decided to go with the kNN Classifer as it has proven to be a good baseline in previous labs and exercises in R.
-
 
 
 Before the classification begins, parallel processing is enabled to speed up this process.
@@ -430,8 +457,8 @@ The train control is set to cross-validation with 5 folds:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{#set train control to cross-validation with 5 folds}
-\hlstd{train_control}\hlkwb{<-} \hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,} \hlkwc{number}\hlstd{=}\hlnum{5}\hlstd{)}
+\hlcom{#set train control to cross-validation with 10 folds}
+\hlstd{train_control}\hlkwb{<-} \hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,} \hlkwc{number}\hlstd{=}\hlnum{10}\hlstd{,}\hlkwc{verboseIter}\hlstd{=}\hlnum{FALSE}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -449,8 +476,9 @@ The train control is set to cross-validation with 5 folds:
 \hlcom{#train model using kNN}
 \hlstd{kNNModel} \hlkwb{<-} \hlkwd{train}\hlstd{(Edible} \hlopt{~} \hlstd{.,} \hlkwc{data} \hlstd{= training,}
                   \hlkwc{trControl} \hlstd{= train_control,}
-                  \hlkwc{tuneLength} \hlstd{=} \hlnum{20}\hlstd{,}
-                  \hlkwc{method} \hlstd{=} \hlstr{"knn"}
+                  \hlkwc{tuneLength} \hlstd{=}\hlnum{10}\hlstd{,}
+                  \hlkwc{method} \hlstd{=} \hlstr{"knn"}\hlstd{,}
+                  \hlkwc{metric} \hlstd{=} \hlstr{'Accuracy'}
 \hlstd{)}
 \end{alltt}
 \end{kframe}
@@ -469,7 +497,7 @@ Once the knn Model is complete, it's time to analyse the results, first with a p
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-
+51.7971 percent, 
 
 
 \begin{knitrout}
@@ -477,36 +505,26 @@ Once the knn Model is complete, it's time to analyse the results, first with a p
 \begin{verbatim}
 ## k-Nearest Neighbors 
 ## 
-## 5688 samples
+## 4875 samples
 ##   22 predictor
 ##    2 classes: 'Edible', 'Poisonous' 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (5 fold) 
-## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 4387, 4387, 4388, 4387, 4388, 4388, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   k   Accuracy   Kappa    
-##    5  0.9992964  0.9985907
-##    7  0.9989446  0.9978860
-##    9  0.9987687  0.9975336
-##   11  0.9984169  0.9968289
-##   13  0.9980654  0.9961249
-##   15  0.9978895  0.9957725
-##   17  0.9980654  0.9961249
-##   19  0.9975377  0.9950681
-##   21  0.9973618  0.9947159
-##   23  0.9975377  0.9950683
-##   25  0.9971863  0.9943648
-##   27  0.9966591  0.9933090
-##   29  0.9959561  0.9919015
-##   31  0.9954287  0.9908461
-##   33  0.9950768  0.9901412
-##   35  0.9945492  0.9890853
-##   37  0.9940215  0.9880294
-##   39  0.9933181  0.9866213
-##   41  0.9920878  0.9841591
-##   43  0.9908568  0.9816959
+##    5  0.9993844  0.9987671
+##    7  0.9987697  0.9975357
+##    9  0.9985643  0.9971245
+##   11  0.9983594  0.9967139
+##   13  0.9983594  0.9967139
+##   15  0.9983594  0.9967139
+##   17  0.9983594  0.9967139
+##   19  0.9983594  0.9967139
+##   21  0.9981545  0.9963035
+##   23  0.9977442  0.9954821
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was k = 5.
@@ -536,25 +554,25 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ##            Reference
 ## Prediction  Edible Poisonous
-##   Edible      1262         0
-##   Poisonous      0      1174
+##   Edible      1683         0
+##   Poisonous      0      1566
 ##                                      
 ##                Accuracy : 1          
-##                  95% CI : (0.9985, 1)
-##     No Information Rate : 0.5181     
+##                  95% CI : (0.9989, 1)
+##     No Information Rate : 0.518      
 ##     P-Value [Acc > NIR] : < 2.2e-16  
 ##                                      
 ##                   Kappa : 1          
 ##  Mcnemar's Test P-Value : NA         
 ##                                      
-##             Sensitivity : 1.0000     
-##             Specificity : 1.0000     
-##          Pos Pred Value : 1.0000     
-##          Neg Pred Value : 1.0000     
-##              Prevalence : 0.5181     
-##          Detection Rate : 0.5181     
-##    Detection Prevalence : 0.5181     
-##       Balanced Accuracy : 1.0000     
+##             Sensitivity : 1.000      
+##             Specificity : 1.000      
+##          Pos Pred Value : 1.000      
+##          Neg Pred Value : 1.000      
+##              Prevalence : 0.518      
+##          Detection Rate : 0.518      
+##    Detection Prevalence : 0.518      
+##       Balanced Accuracy : 1.000      
 ##                                      
 ##        'Positive' Class : Edible     
 ## 
@@ -609,13 +627,13 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \begin{verbatim}
 ## C5.0 
 ## 
-## 5688 samples
+## 4875 samples
 ##   22 predictor
 ##    2 classes: 'Edible', 'Poisonous' 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (5 fold) 
-## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 4387, 4387, 4388, 4387, 4388, 4388, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   model  winnow  trials  Accuracy   Kappa    
@@ -629,16 +647,16 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ##   rules  FALSE   70      1.0000000  1.0000000
 ##   rules  FALSE   80      1.0000000  1.0000000
 ##   rules  FALSE   90      1.0000000  1.0000000
-##   rules   TRUE    1      0.9991216  0.9982406
-##   rules   TRUE   10      1.0000000  1.0000000
-##   rules   TRUE   20      1.0000000  1.0000000
-##   rules   TRUE   30      1.0000000  1.0000000
-##   rules   TRUE   40      0.9996485  0.9992961
-##   rules   TRUE   50      0.9996485  0.9992961
-##   rules   TRUE   60      0.9996485  0.9992961
-##   rules   TRUE   70      0.9996485  0.9992961
-##   rules   TRUE   80      0.9996485  0.9992961
-##   rules   TRUE   90      0.9996485  0.9992961
+##   rules   TRUE    1      0.9991799  0.9983573
+##   rules   TRUE   10      0.9995902  0.9991795
+##   rules   TRUE   20      0.9997951  0.9995895
+##   rules   TRUE   30      0.9997951  0.9995895
+##   rules   TRUE   40      0.9997951  0.9995895
+##   rules   TRUE   50      0.9997951  0.9995895
+##   rules   TRUE   60      0.9997951  0.9995895
+##   rules   TRUE   70      0.9997951  0.9995895
+##   rules   TRUE   80      0.9997951  0.9995895
+##   rules   TRUE   90      0.9997951  0.9995895
 ##   tree   FALSE    1      1.0000000  1.0000000
 ##   tree   FALSE   10      1.0000000  1.0000000
 ##   tree   FALSE   20      1.0000000  1.0000000
@@ -649,16 +667,16 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ##   tree   FALSE   70      1.0000000  1.0000000
 ##   tree   FALSE   80      1.0000000  1.0000000
 ##   tree   FALSE   90      1.0000000  1.0000000
-##   tree    TRUE    1      0.9994728  0.9989440
-##   tree    TRUE   10      1.0000000  1.0000000
-##   tree    TRUE   20      1.0000000  1.0000000
-##   tree    TRUE   30      1.0000000  1.0000000
-##   tree    TRUE   40      1.0000000  1.0000000
-##   tree    TRUE   50      1.0000000  1.0000000
-##   tree    TRUE   60      1.0000000  1.0000000
-##   tree    TRUE   70      1.0000000  1.0000000
-##   tree    TRUE   80      1.0000000  1.0000000
-##   tree    TRUE   90      1.0000000  1.0000000
+##   tree    TRUE    1      0.9993852  0.9987685
+##   tree    TRUE   10      0.9981528  0.9963038
+##   tree    TRUE   20      0.9997951  0.9995895
+##   tree    TRUE   30      0.9995902  0.9991792
+##   tree    TRUE   40      0.9995902  0.9991792
+##   tree    TRUE   50      0.9995902  0.9991792
+##   tree    TRUE   60      0.9995902  0.9991792
+##   tree    TRUE   70      0.9995902  0.9991792
+##   tree    TRUE   80      0.9995902  0.9991792
+##   tree    TRUE   90      0.9995902  0.9991792
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final values used for the model were trials = 1, model = rules
@@ -688,25 +706,25 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ##            Reference
 ## Prediction  Edible Poisonous
-##   Edible      1262         0
-##   Poisonous      0      1174
+##   Edible      1683         0
+##   Poisonous      0      1566
 ##                                      
 ##                Accuracy : 1          
-##                  95% CI : (0.9985, 1)
-##     No Information Rate : 0.5181     
+##                  95% CI : (0.9989, 1)
+##     No Information Rate : 0.518      
 ##     P-Value [Acc > NIR] : < 2.2e-16  
 ##                                      
 ##                   Kappa : 1          
 ##  Mcnemar's Test P-Value : NA         
 ##                                      
-##             Sensitivity : 1.0000     
-##             Specificity : 1.0000     
-##          Pos Pred Value : 1.0000     
-##          Neg Pred Value : 1.0000     
-##              Prevalence : 0.5181     
-##          Detection Rate : 0.5181     
-##    Detection Prevalence : 0.5181     
-##       Balanced Accuracy : 1.0000     
+##             Sensitivity : 1.000      
+##             Specificity : 1.000      
+##          Pos Pred Value : 1.000      
+##          Neg Pred Value : 1.000      
+##              Prevalence : 0.518      
+##          Detection Rate : 0.518      
+##    Detection Prevalence : 0.518      
+##       Balanced Accuracy : 1.000      
 ##                                      
 ##        'Positive' Class : Edible     
 ## 
@@ -755,26 +773,26 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \begin{verbatim}
 ## Random Forest 
 ## 
-## 5688 samples
+## 4875 samples
 ##   22 predictor
 ##    2 classes: 'Edible', 'Poisonous' 
 ## 
 ## No pre-processing
-## Resampling: Cross-Validated (5 fold) 
-## Summary of sample sizes: 4551, 4549, 4551, 4551, 4550 
+## Resampling: Cross-Validated (10 fold) 
+## Summary of sample sizes: 4387, 4387, 4388, 4387, 4388, 4388, ... 
 ## Resampling results across tuning parameters:
 ## 
 ##   mtry  Accuracy   Kappa    
-##     2   0.8957470  0.7896431
+##     2   0.8933269  0.7847147
 ##    26   1.0000000  1.0000000
 ##    50   1.0000000  1.0000000
 ##    75   1.0000000  1.0000000
 ##    99   1.0000000  1.0000000
-##   123   0.9998241  0.9996477
-##   148   0.9998241  0.9996477
-##   172   0.9996484  0.9992958
-##   196   0.9996484  0.9992958
-##   221   0.9996484  0.9992958
+##   123   1.0000000  1.0000000
+##   148   0.9997951  0.9995895
+##   172   0.9997951  0.9995895
+##   196   0.9995897  0.9991783
+##   221   0.9995897  0.9991783
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
 ## The final value used for the model was mtry = 26.
@@ -799,25 +817,25 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ##            Reference
 ## Prediction  Edible Poisonous
-##   Edible      1262         0
-##   Poisonous      0      1174
+##   Edible      1683         0
+##   Poisonous      0      1566
 ##                                      
 ##                Accuracy : 1          
-##                  95% CI : (0.9985, 1)
-##     No Information Rate : 0.5181     
+##                  95% CI : (0.9989, 1)
+##     No Information Rate : 0.518      
 ##     P-Value [Acc > NIR] : < 2.2e-16  
 ##                                      
 ##                   Kappa : 1          
 ##  Mcnemar's Test P-Value : NA         
 ##                                      
-##             Sensitivity : 1.0000     
-##             Specificity : 1.0000     
-##          Pos Pred Value : 1.0000     
-##          Neg Pred Value : 1.0000     
-##              Prevalence : 0.5181     
-##          Detection Rate : 0.5181     
-##    Detection Prevalence : 0.5181     
-##       Balanced Accuracy : 1.0000     
+##             Sensitivity : 1.000      
+##             Specificity : 1.000      
+##          Pos Pred Value : 1.000      
+##          Neg Pred Value : 1.000      
+##              Prevalence : 0.518      
+##          Detection Rate : 0.518      
+##    Detection Prevalence : 0.518      
+##       Balanced Accuracy : 1.000      
 ##                                      
 ##        'Positive' Class : Edible     
 ## 
@@ -832,40 +850,44 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 
 \subsubsection{Comparison of all Models}
 
-
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{rs} \hlkwb{<-} \hlkwd{resamples}\hlstd{(}\hlkwd{list}\hlstd{(}\hlkwc{kNN} \hlstd{= kNNModel,}
+                     \hlkwc{c50} \hlstd{= c50Model,}
+                     \hlkwc{rf} \hlstd{= RFModel))}
+\hlkwd{summary}\hlstd{(rs)}
+\hlkwd{bwplot}\hlstd{(rs,} \hlkwc{layout} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{4}\hlstd{,} \hlnum{1}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
-## Confusion Matrix and Statistics
 ## 
-##            Reference
-## Prediction  Edible Poisonous
-##   Edible      1262         0
-##   Poisonous      0      1174
-##                                      
-##                Accuracy : 1          
-##                  95% CI : (0.9985, 1)
-##     No Information Rate : 0.5181     
-##     P-Value [Acc > NIR] : < 2.2e-16  
-##                                      
-##                   Kappa : 1          
-##  Mcnemar's Test P-Value : NA         
-##                                      
-##             Sensitivity : 1.0000     
-##             Specificity : 1.0000     
-##          Pos Pred Value : 1.0000     
-##          Neg Pred Value : 1.0000     
-##              Prevalence : 0.5181     
-##          Detection Rate : 0.5181     
-##    Detection Prevalence : 0.5181     
-##       Balanced Accuracy : 1.0000     
-##                                      
-##        'Positive' Class : Edible     
+## Call:
+## summary.resamples(object = rs)
 ## 
+## Models: kNN, c50, rf 
+## Number of resamples: 10 
+## 
+## Accuracy 
+##          Min.   1st Qu. Median      Mean 3rd Qu. Max. NA's
+## kNN 0.9979466 0.9984631      1 0.9993844       1    1    0
+## c50 1.0000000 1.0000000      1 1.0000000       1    1    0
+## rf  1.0000000 1.0000000      1 1.0000000       1    1    0
+## 
+## Kappa 
+##          Min.   1st Qu. Median      Mean 3rd Qu. Max. NA's
+## kNN 0.9958876 0.9969216      1 0.9987671       1    1    0
+## c50 1.0000000 1.0000000      1 1.0000000       1    1    0
+## rf  1.0000000 1.0000000      1 1.0000000       1    1    0
 \end{verbatim}
 \end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-48-1} 
+
 \end{knitrout}
 
 
@@ -1013,7 +1035,7 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ##    RingNumber RingType SporePrintColor Population   Habitat   cluster
 ## 1         0.5        1           0.125        0.4 0.0000000 Edible_c2
 ## 2         0.5        1           0.125        0.4 0.3333333 Edible_c2
-## 3         0.5        0           0.125        0.0 0.0000000 Edible_c2
+## 3         0.5        0           0.125        0.0 0.0000000 Edible_c1
 ## 4         0.5        1           0.000        0.4 0.0000000 Edible_c2
 ## 5         0.5        1           0.000        0.4 0.3333333 Edible_c2
 ## 6         0.5        1           0.125        0.6 0.3333333 Edible_c2
@@ -1087,23 +1109,23 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 4388, 4388, 4387, 4389, 4389, 4388, ... 
+## Summary of sample sizes: 4387, 4389, 4388, 4388, 4389, 4388, ... 
 ## Resampling results across tuning parameters:
 ## 
-##   mtry  Accuracy   Kappa    
-##    2    0.9993852  0.9991760
-##    4    0.9993852  0.9991760
-##    6    0.9993852  0.9991760
-##    8    0.9993852  0.9991760
-##   10    0.9993852  0.9991760
-##   12    0.9993852  0.9991760
-##   14    0.9993852  0.9991760
-##   16    0.9993852  0.9991760
-##   18    0.9993852  0.9991760
-##   21    0.9995902  0.9994507
+##   mtry  Accuracy  Kappa
+##    2    1         1    
+##    4    1         1    
+##    6    1         1    
+##    8    1         1    
+##   10    1         1    
+##   12    1         1    
+##   14    1         1    
+##   16    1         1    
+##   18    1         1    
+##   21    1         1    
 ## 
 ## Accuracy was used to select the optimal model using the largest value.
-## The final value used for the model was mtry = 21.
+## The final value used for the model was mtry = 2.
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
@@ -1126,32 +1148,32 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 ## 
 ##               Reference
 ## Prediction     Edible_c1 Edible_c2 Poisonous_c1 Poisonous_c2
-##   Edible_c1          732         1            0            0
-##   Edible_c2            0       949            0            0
+##   Edible_c1          537         0            0            0
+##   Edible_c2            0      1145            0            0
 ##   Poisonous_c1         0         0          862            0
 ##   Poisonous_c2         0         0            0          704
 ## 
 ## Overall Statistics
 ##                                      
-##                Accuracy : 0.9997     
-##                  95% CI : (0.9983, 1)
-##     No Information Rate : 0.2925     
+##                Accuracy : 1          
+##                  95% CI : (0.9989, 1)
+##     No Information Rate : 0.3525     
 ##     P-Value [Acc > NIR] : < 2.2e-16  
 ##                                      
-##                   Kappa : 0.9996     
+##                   Kappa : 1          
 ##  Mcnemar's Test P-Value : NA         
 ## 
 ## Statistics by Class:
 ## 
 ##                      Class: Edible_c1 Class: Edible_c2 Class: Poisonous_c1
-## Sensitivity                    1.0000           0.9989              1.0000
-## Specificity                    0.9996           1.0000              1.0000
-## Pos Pred Value                 0.9986           1.0000              1.0000
-## Neg Pred Value                 1.0000           0.9996              1.0000
-## Prevalence                     0.2254           0.2925              0.2654
-## Detection Rate                 0.2254           0.2922              0.2654
-## Detection Prevalence           0.2257           0.2922              0.2654
-## Balanced Accuracy              0.9998           0.9995              1.0000
+## Sensitivity                    1.0000           1.0000              1.0000
+## Specificity                    1.0000           1.0000              1.0000
+## Pos Pred Value                 1.0000           1.0000              1.0000
+## Neg Pred Value                 1.0000           1.0000              1.0000
+## Prevalence                     0.1653           0.3525              0.2654
+## Detection Rate                 0.1653           0.3525              0.2654
+## Detection Prevalence           0.1653           0.3525              0.2654
+## Balanced Accuracy              1.0000           1.0000              1.0000
 ##                      Class: Poisonous_c2
 ## Sensitivity                       1.0000
 ## Specificity                       1.0000
@@ -1169,6 +1191,83 @@ Next is a confusion matrix is created by predicting the accuracy against the tes
 \clearpage
 \subsubsection{Results}
 
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Split the actual results}
+\hlstd{actual} \hlkwb{<-} \hlstd{testingCluster}\hlopt{$}\hlstd{cluster}
+\hlkwd{str}\hlstd{(actual)}
+
+\hlcom{#Split the predicted Results}
+\hlstd{pred} \hlkwb{<-} \hlstd{predictRFCluster}
+\hlkwd{str}\hlstd{(pred)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+##  chr [1:3248] "Edible_c1" "Edible_c2" "Edible_c1" "Edible_c2" ...
+##  Factor w/ 4 levels "Edible_c1","Edible_c2",..: 1 2 1 2 2 2 2 2 2 2 ...
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Combine the actual and predicted results into a dataframe.}
+\hlstd{cols} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlstr{"Actual"} \hlstd{= actual,} \hlstr{"Predicted"} \hlstd{= pred)}
+
+\hlcom{#Convert the both the actual and predict results to characters}
+\hlstd{cols}\hlopt{$}\hlstd{Actual} \hlkwb{<-} \hlkwd{as.character}\hlstd{(cols}\hlopt{$}\hlstd{Actual)}
+\hlstd{cols}\hlopt{$}\hlstd{Predicted} \hlkwb{<-} \hlkwd{as.character}\hlstd{(cols}\hlopt{$}\hlstd{Predicted)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Loop for all the rows in cols dataframe}
+\hlkwa{for}\hlstd{(row} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(cols))\{}
+
+  \hlcom{#split actual/pred again within for loop}
+  \hlstd{actualRow} \hlkwb{<-} \hlstd{cols}\hlopt{$}\hlstd{Actual[row]}
+  \hlstd{predRow} \hlkwb{<-} \hlstd{cols}\hlopt{$}\hlstd{Predicted[row]}
+
+  \hlcom{#Remove the last three characters in the actual/predicted results }
+  \hlcom{# then check if they are the same}
+  \hlstd{results[row]} \hlkwb{<-} \hlkwd{substr}\hlstd{(actualRow,} \hlnum{0}\hlstd{,}\hlkwd{nchar}\hlstd{(actualRow)}\hlopt{-}\hlnum{3}\hlstd{)}\hlopt{==} \hlkwd{substr}\hlstd{(predRow,}\hlnum{0}\hlstd{,} \hlkwd{nchar}\hlstd{(predRow)}\hlopt{-}\hlnum{3}\hlstd{)}
+
+  \hlcom{#If results are the same(TRUE) then set 'Yes' otherwise then 'No'}
+  \hlkwa{if}\hlstd{(results[row]} \hlopt{==} \hlnum{TRUE}\hlstd{)\{}
+    \hlstd{results[row]} \hlkwb{<-} \hlstr{'Yes'}
+  \hlstd{\}} \hlkwa{else}\hlstd{\{}
+    \hlstd{results[row]} \hlkwb{<-} \hlstr{'No'}
+  \hlstd{\}}
+\hlstd{\}}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): object 'results' not found}}\end{kframe}
+\end{knitrout}
+
+\clearpage
 
 % latex table generated in R 3.4.2 by xtable 1.8-2 package
 % Sun Apr 22 15:14:57 2018
@@ -1267,7 +1366,7 @@ I used a helper function to import the dataset, it helps with assigning the corr
 } 
 
 
-
+\label{figHelper}
 \begin{figure}[H]
 \caption {fetchAndCleanData Function for Mushroom dataset}
 \end {figure}
@@ -1518,7 +1617,7 @@ fetchAndCleanData = function(){
   return(shrooms)
 }
 \end{lstlisting}
-\label{figHelper}
+
 
 
 \clearpage
@@ -1558,7 +1657,7 @@ clustData <- function (df,ClassIndex,kmeansClasses = rep(0,unique(df[,ClassIndex
   return(allClusteredElements)
 }
 \end{lstlisting}
-\label{figCluster}
+
 
 
 \end{document}

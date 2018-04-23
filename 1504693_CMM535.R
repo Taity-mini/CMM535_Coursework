@@ -36,8 +36,9 @@ str(mushroom)
 
 
 #Class Distribution
-barplot(table(mushroom$Edible))
 
+barplot(table(mushroom$Edible))
+summary(mushroom$Edible)
 
 #Comparisons of CapShape and CapSurface with Edible or Poisionous
 ggplot(mushroom,aes(x=CapShape, y=CapSurface, color=Edible)) + 
@@ -63,7 +64,7 @@ table(complete.cases (mushroom))
 #Modeling and Classification
 
 
-#Divide the datset into 70% training and 30% testing.
+#Divide the dataset into 60% training and 40% testing.
 inTrain <- createDataPartition(y=mushroom$Edible, p=0.6, list=FALSE)
 
 #Assign indexes to split the Mushroom dataset into training and testing
@@ -78,7 +79,7 @@ testing <- mushroom[-inTrain,]
 cl <- makeCluster(detectCores(), type='PSOCK')
 registerDoParallel(cl)
 
-#set train control to cross-validation with 5 folds
+#set train control to cross-validation with 10 folds
 train_control<- trainControl(method="cv", number=10,verboseIter=FALSE)
 
 #First set the seed for reproducibility
@@ -102,20 +103,6 @@ confusionMatrix(predictkNN, testing$Edible)
 
 
 
-#First set the seed for reproducibility
-set.seed(1)
-
-# train the model using random forest
-RFModel<- train(Edible~., data=training,
-                trControl=train_control,
-                method="rf",
-                tuneLength =10,
-                metric = 'Accuracy'
-)
-RFModel
-
-predictRF <- predict(RFModel,testing)
-confusionMatrix(predictRF, testing$Edible)
 
 
 #First set the seed for reproducibility
@@ -135,6 +122,24 @@ confusionMatrix(predictC50,testing$Edible)
 
 
 
+#First set the seed for reproducibility
+set.seed(1)
+
+# train the model using random forest
+RFModel<- train(Edible~., data=training,
+                trControl=train_control,
+                method="rf",
+                tuneLength =10,
+                metric = 'Accuracy'
+)
+RFModel
+
+predictRF <- predict(RFModel,testing)
+confusionMatrix(predictRF, testing$Edible)
+
+varImpPlot(RFModel$finalModel,main = 'Variable Importance')
+
+
 # make predictions
 predictions<- predict(mymodel$finalModel,testing[,-ncol(testing)])
 # append predictions (just for manual analysis)
@@ -145,7 +150,7 @@ results<- confusionMatrix(test$predictions,test$Edible)
 
 results
 
-varImpPlot(RFModel$finalModel,main = 'Variable Importance')
+
 
 
 actual <- clusteredDF$cluster
